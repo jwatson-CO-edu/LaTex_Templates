@@ -1,0 +1,318 @@
+\documentclass[fleqn]{hw8}
+
+\usepackage{notes}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage[linewidth=1pt, leftmargin=0,rightmargin=0, innertopmargin = \topskip,splittopskip=\topskip, innerleftmargin=2,innerrightmargin=10]{mdframed}
+\topmargin -1.5cm        % read Lamport p.163
+\oddsidemargin -0.04cm   % read Lamport p.163
+\evensidemargin -0.04cm  % same as oddsidemargin but for left-hand pages
+\textwidth 16.59cm
+\textheight 21.94cm
+\parskip 7.2pt           % sets spacing between paragraphs
+
+% == HW Repair ==
+\usepackage{verbatim} % for block comments
+\usepackage[margin=0.5in]{geometry} % Override enormous margins! 
+\usepackage[all, cmtip]{xy} % Graphs!
+\newcommand{\crcchr}[1]{{\Large \textcircled{\normalsize #1}}} % Circle a characher for diagrams/graphs
+\newcommand{\crcmth}[1]{{\LARGE \textcircled{\normalsize #1}}} % Circle large enough for a negated character
+\usepackage{framed} % frame a lot of stuff, URL: http://tex.stackexchange.com/a/163376
+% == End Repair ==
+
+\usepackage{listings} % source code formatting, URL: https://www.overleaf.com/4950285xjfphj#/15273478/
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0} % colors to be used for highlighting
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+	backgroundcolor=\color{white},% ---- choose the background color
+	basicstyle=\footnotesize\ttfamily, % size of fonts used for the code
+	breaklines=true, % ----------------- automatic line breaking only at whitespace
+	captionpos=b, % -------------------- sets the caption-position to bottom
+	commentstyle=\color{mygreen}, % ---- comment style
+	escapeinside={\%*}{*)}, % ---------- if you want to add LaTeX within your code
+	keywordstyle=\color{blue}, % ------- keyword style
+	stringstyle=\color{mymauve}, % ----- string literal style
+}
+
+\title{HW8: Hidden Markov Models}
+\duedate{Due: April 22, 2016}
+\class{CS6300: Artificial Intelligence, Spring 2016}
+\institute{University of Utah}
+\author{James Watson, u1015536}
+\begin{document}
+\maketitle
+\section{Stationary Distributions of Markov Chains}
+
+\textit{Alice decides that she wants to keep re-taking AI every semester, and we're interested in modeling whether she passes the class or not as a Markov chain.}
+\begin{itemize}
+	\item $ P(g_{t+1} \mid g_{1}) = 0.8 $, In semester $t$ she passes $g_t$ the class; then in semester $t+1$ she passes the class with probability $0.8$.
+	\item  $ P(g_{t+1} \mid \neg g_{1}) = 0.4 $, If she doesn't pass in semester $t$ then she'll pass with probability $0.4$.
+\end{itemize}
+  
+\begin{tabular}[t]{c|l}
+	$G_{t}$ & $P(g_{t+1} \mid G_{t})$ \\ \hline
+	T   & 0.8 \\
+	F   & 0.4
+\end{tabular}
+
+\begin{enumerate}
+\item \textit{Suppose that in semester $t=0$ Alice passes the class with probability $0.5$.  Compute the probability that she passes in semester $t=1$ and semester $t=2$.}\\
+\textbf{Answer}: \\
+% first column
+\begin{minipage}[t]{0.27\textwidth}
+	$\displaystyle
+	\xymatrix {
+		0 & 1 & 2 \\
+		\crcmth{$g$} \ar@{->}[r] \ar@{->}[rd] & \crcmth{$g$} \ar@{->}[r] \ar@{->}[rd] & \crcmth{$g$} \ar@{--}[r]&  & \\
+		\crcmth{$\neg g$} \ar@{->}[r] \ar@{->}[ru] & \crcmth{$\neg g$} \ar@{->}[r] \ar@{->}[ru] & \crcmth{$\neg g$} \ar@{--}[r]&  & 
+	} $
+\end{minipage}
+%second column
+\begin{minipage}[t]{0.73\textwidth}
+	$\ $ \\ % force an "empty" line
+	$\ $ \\ % force an "empty" line
+	$\displaystyle P(g_1) = \sum_{G_0} P(g_1 \mid G_0)P(G_0) = (0.8)(0.5) + (0.4)(0.5) = \boxed{0.60 = P(g_1)} $ \\
+	$\ $ \\ % force an "empty" line
+	$\ $ \\ % force an "empty" line
+	$\displaystyle P(g_2) = \sum_{G_1} P(g_2 \mid G_1)P(G_1) = (0.8)(0.6) + (0.4)(0.4) = \boxed{0.64 = P(g_2)} $
+\end{minipage}
+
+\item \textit{Compute the stationary distribution of this chain.} \\
+\textbf{Answer}: Using the formula given in the answer to Problem 1.1, the answer converges to within 0.0001 in 13 iterations. \\
+$\displaystyle P(g_{13}) = \sum_{G_{12}} P(g_{13} \mid G_{12})P(G_{12}) = \boxed{0.667 = P(g_{13})} $ ,
+$\displaystyle P(\neg g_{13}) = 1 - P(g_{13}) = \boxed{0.333 = P(\neg g_{13})} $ \\
+A similar result is obtained by simulating the evolution of states through the chain, see Appendix A.  After 10,000 transitions the following is obtained:\\
+$\displaystyle \boxed{P(g) = 0.667}$ ,   $\displaystyle \boxed{P(\neg g) = 0.333}$
+
+\end{enumerate}
+\vspace{-0.5cm}
+\section{Alice and the Crazy Coke Machine}
+\vspace{-0.5cm}
+All you can do with the soda machine is put money in and hope it gives you the type of drink you want.  It carries three types of soda: 
+Coke (C), Diet Coke (D) and Sprite (S).
+
+The soda machine behaves as an HMM.  It has two internal states (call them A and B).  
+\begin{itemize}
+\item When asked for a soda from state A, it gives a coke with probability 1/2, and a diet coke and a sprite each with probability 1/4.
+\item When asked for a soda in state B, it gives a diet coke with probability 1/2, a sprite with probability 1/3 and a coke with probability 1/6.
+\item It transitions from state A to A with probability 4/5
+\item It transitions from state B to B with probability 3/5. 
+\end{itemize}
+
+\begin{tabular}[t]{c|l}
+	$X_{t}$ & $P(x_{t+1} = A \mid X_{t})$ \\ 
+	\cline{1-2}
+	A   & 0.8 \\
+	B   & 0.4 $ = 1 - 3/5$
+\end{tabular}
+\quad
+\begin{tabular}[t]{c|l}
+	$X_{t}$ & $P(x_{t+1} = B \mid X_{t})$ \\ 
+	\cline{1-2}
+	A   & 0.2 $ = 1 - 4/5$\\
+	B   & 0.6 
+\end{tabular}
+\quad
+\begin{tabular}[t]{c|l}
+	$E_{t}$ & $P(E_{t} \mid x_{t} = A)$ \\ 
+	\cline{1-2}
+	C   & 0.5 \\
+	D   & 0.25 \\
+	S   & 0.25 
+\end{tabular}
+\quad
+\begin{tabular}[t]{c|l}
+	$E_{t}$ & $P(E_{t} \mid x_{t} = B)$ \\ 
+	\cline{1-2}
+	C   & 0.167 \\
+	D   & 0.5 \\
+	S   & 0.333 
+\end{tabular}
+
+The machine formally works as follows:
+
+\begin{itemize}
+	\item [\boldmath$t$:] It is in some state $x$.  Someone puts in money and it dispenses a soda according to the probability rules set out above, being in state $x$.
+	\item [\boldmath$t+1$:] It then (randomly) transitions to a new state $x'$ according to the transition probabilities above.
+\end{itemize}
+
+
+
+\begin{enumerate}
+\item \textit{Draw a state space lattice for this soda machine for three time steps.}\\
+\textbf{Answer}: \\
+
+\xymatrix @! {
+	0 & 1 & 2 & 3 \\
+	\crcmth{$E_{0}$} & \crcmth{$E_{1}$} & \crcmth{$E_{2}$} & \crcmth{$E_{3}$} \\
+	\crcchr{A} \ar@{->}[r]_(.4){0.8} \ar@{->}[rd]_(.25){0.2} \ar@{->}[u] & 
+	\crcchr{A} \ar@{->}[r]_(.4){0.8} \ar@{->}[rd]_(.25){0.2} \ar@{->}[u] & 
+	\crcchr{A} \ar@{->}[r]_(.4){0.8} \ar@{->}[rd]_(.25){0.2} \ar@{->}[u] & \crcchr{A} \ar@{--}[r] \ar@{->}[u] &  & \\
+	\crcchr{B} \ar@{->}[r]_(.4){0.6} \ar@{->}[ru]^(.2){0.4} \ar@{->}[d] & 
+	\crcchr{B} \ar@{->}[r]_(.4){0.6} \ar@{->}[ru]^(.2){0.4} \ar@{->}[d] & 
+	\crcchr{B} \ar@{->}[r]_(.4){0.6} \ar@{->}[ru]^(.2){0.4} \ar@{->}[d] & \crcchr{B} \ar@{--}[r] \ar@{->}[d] &  & \\
+	\crcmth{$E_{0}$} & \crcmth{$E_{1}$} & \crcmth{$E_{2}$} & \crcmth{$E_{3}$} 
+}
+
+\item \textit{Suppose that Alice doesn't know what state the machine is in currently (specifically, she believes it's equally likely to be in either state), but puts money in and gets a Sprite ($S$) out. \\ 
+What is the probability distribution over states when Alice put her money in?}  \\
+\textbf{Answer}: $ \boxed{P(A_0) = 0.5} $ , $ \boxed{P(B_0) = 0.5} $ \\
+
+\textit{What is the probability distribution over states now?}\\
+\textbf{Answer}: Using the forward algorithm \dots \\
+
+\textbf{Step 1}: Determine the probability of states A and B at time 0, given the observation at time 0: \\
+$\displaystyle P(A_0 \mid S_0) = \alpha P(S_0 \mid A_0)P(A_0) = \alpha (0.250)(0.5) = \alpha (0.125) $ \\
+$\displaystyle P(B_0 \mid S_0) = \alpha P(S_0 \mid B_0)P(B_0) = \alpha (0.333)(0.5) = \alpha (0.167) $ \\
+Determine $\alpha$ from equality and multiply for probabilities.\\
+$\alpha (0.167) = 1 - \alpha (0.125) $ , $\alpha (0.292) = 1 $ , $\alpha = 1/(0.292) = 3.429 $ \\
+$P(A_0 \mid S_0) = (3.429)(0.125) = 0.429 $ , $P(B_0 \mid S_0) = (3.429)(0.167) = 0.571$
+
+\textbf{Step 2}: Determine the probability of states A and B at time 1, given the observation at time 0: \\
+$\displaystyle P(A_1) = \sum_{X_0} P(A_1 \mid X_0)P(X_0 \mid S_0) = (0.8)(0.429) + (0.4)(0.571) = \boxed{0.572 = P(A_1)} $ \\
+$\displaystyle P(B_1) = \sum_{X_0} P(B_1 \mid X_0)P(X_0 \mid S_0) = (0.2)(0.429) + (0.6)(0.571) = \boxed{0.428 = P(B_1)} $ \\
+
+\item \textit{Suppose Alice comes back the next day (so again she doesn't know what state the machine is in).
+  The machine produces the following series of emissions upon taking money from Alice: C S S D.  What is the most likely sequence of states the
+  machine went through in this process?} \\
+  
+\textbf{Answer}: Using the forward algorithm \dots \\
+
+\textbf{Time 0, Step 1}: Determine the probability of states A and B at time 0, given the observation at time 0: \\
+$\displaystyle P(A_0 \mid C_0) = \alpha P(C_0 \mid A_0)P(A_0) = \alpha (0.500)(0.5) = \alpha (0.25) $ \\
+$\displaystyle P(B_0 \mid C_0) = \alpha P(C_0 \mid B_0)P(B_0) = \alpha (0.167)(0.5) = \alpha (0.0835) $ \\
+Determine $\alpha$ from equality and multiply for probabilities.\\
+$\alpha (0.25) = 1 - \alpha (0.0835) $ , $\alpha (0.3335) = 1 $ , $\alpha = 1/(0.3335) = 2.9985 $ \\
+$P(A_0 \mid C_0) = (2.9985)(0.25) = \mathbf{0.75} $ , $P(B_0 \mid C_0) = (2.9985)(0.0835) = \mathbf{0.25}$
+
+\textbf{Time 1, Step 2}: Determine the probability of states A and B at time 1, given the observation at time 0: \\
+$\displaystyle P(A_1) = \sum_{X_0} P(A_1 \mid X_0)P(X_0 \mid C_0) = (0.8)(0.75) + (0.4)(0.25) = 0.7 $ \\
+$\displaystyle P(B_1) = \sum_{X_0} P(B_1 \mid X_0)P(X_0 \mid C_0) = (0.2)(0.75) + (0.6)(0.25) = 0.3 $ \\
+
+\textbf{Time 1, Step 3}: Determine the probability of states A and B at time 1, given the observation at time 1: \\
+$\displaystyle P(A_1 \mid S_1) = \alpha P(S_1 \mid A_1)P(A_1) = \alpha (0.250)(0.7) = \alpha (0.175) $ \\
+$\displaystyle P(B_1 \mid S_1) = \alpha P(S_1 \mid B_1)P(B_1) = \alpha (0.333)(0.3) = \alpha (0.0999) $ \\
+Determine $\alpha$ from equality and multiply for probabilities.\\
+$\alpha (0.175) = 1 - \alpha (0.0999) $ , $\alpha (0.2749) = 1 $ , $\alpha = 1/(0.2749) = 3.6377 $ \\
+$P(A_1 \mid S_1) = (3.6377)(0.175) = \mathbf{0.637} $ , $P(B_1 \mid S_1) = (3.6377)(0.0999) = \mathbf{0.363}$
+
+\textbf{Time 2, Step 4}: Determine the probability of states A and B at time 2, given the observation at time 1: \\
+$\displaystyle P(A_2) = \sum_{X_1} P(A_2 \mid X_1)P(X_1 \mid S_1) = (0.8)(0.637) + (0.4)(0.363) = 0.655 $ \\
+$\displaystyle P(B_2) = \sum_{X_1} P(B_2 \mid X_1)P(X_1 \mid S_1) = (0.2)(0.637) + (0.6)(0.363) = 0.345 $ \\
+
+\textbf{Time 2, Step 5}: Determine the probability of states A and B at time 2, given the observation at time 2: \\
+$\displaystyle P(A_2 \mid S_2) = \alpha P(S_2 \mid A_2)P(A_2) = \alpha (0.250)(0.655) = \alpha (0.1638) $ \\
+$\displaystyle P(B_2 \mid S_2) = \alpha P(S_2 \mid B_2)P(B_2) = \alpha (0.333)(0.345) = \alpha (0.1149) $ \\
+Determine $\alpha$ from equality and multiply for probabilities.\\
+$\alpha (0.1638) = 1 - \alpha (0.1149) $ , $\alpha (0.2787) = 1 $ , $\alpha = 1/(0.2749) = 3.5881 $ \\
+$P(A_2 \mid S_2) = (3.5881)(0.1638) = \mathbf{0.587} $ , $P(B_2 \mid S_2) = (3.5881)(0.1149) = \mathbf{0.412}$
+
+\textbf{Time 3, Step 6}: Determine the probability of states A and B at time 3, given the observation at time 2: \\
+$\displaystyle P(A_3) = \sum_{X_2} P(A_3 \mid X_2)P(X_2 \mid S_2) = (0.8)(0.587) + (0.4)(0.412) = 0.6344 $ \\
+$\displaystyle P(B_3) = \sum_{X_2} P(B_3 \mid X_2)P(X_2 \mid S_2) = (0.2)(0.587) + (0.6)(0.412) = 0.3646 $ \\
+
+\textbf{Time 3, Step 7}: Determine the probability of states A and B at time 3, given the observation at time 3: \\
+$\displaystyle P(A_3 \mid D_3) = \alpha P(D_3 \mid A_3)P(A_3) = \alpha (0.25)(0.6344) = \alpha (0.1586) $ \\
+$\displaystyle P(B_3 \mid D_3) = \alpha P(D_3 \mid B_3)P(B_3) = \alpha (0.50)(0.3646) = \alpha (0.1823) $ \\
+Determine $\alpha$ from equality and multiply for probabilities.\\
+$\alpha (0.1586) = 1 - \alpha (0.1823) $ , $\alpha (0.3409) = 1 $ , $\alpha = 1/(0.3409) = 2.9334 $ \\
+$P(A_3 \mid D_3) = (2.9334)(0.1586) = \mathbf{0.465} $ , $P(B_3 \mid D_2) = (2.9334)(0.1823) = \mathbf{0.535}$\\
+\begin{framed}
+	Given the distributions over the states at each timestep:\\
+	$P(A_0 \mid C_0) = \mathbf{0.750} $ , $P(B_0 \mid C_0) = 0.250$\\
+	$P(A_1 \mid S_1) = \mathbf{0.637} $ , $P(B_1 \mid S_1) = 0.363$\\
+	$P(A_2 \mid S_2) = \mathbf{0.587} $ , $P(B_2 \mid S_2) = 0.412$\\
+	$P(A_3 \mid D_3) = 0.465 $ , $P(B_3 \mid D_2) = \mathbf{0.535}$\\
+	The most likely sequence is: \fbox{$A_0$ , $A_1$ , $A_2$ , $B_3$}
+\end{framed}
+
+\end{enumerate}
+
+\section{Appendix A: Source Code Listing}
+%\subsection{Problem 1.2}
+\begin{lstlisting}[language=python]
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+CS6300_HW08_MarkovChains.py , Built on Spyder for Python 2.7
+James Watson, 2016 April
+Code for HW 8
+"""
+# == Init Environment ==================================================================================
+from __future__ import division
+
+# ~ Standard Libraries ~
+import math
+from os import linesep
+import random
+# ~~ Constants , Shortcuts , Aliases ~~
+EPSILON = 1e-7
+infty = 1e309 
+endl = linesep
+
+# ~ Helper Functions ~
+
+def sep(title = ""):
+    """ Print a separating title card for debug """
+    LINE = '======'
+    print LINE + ' ' + title + ' ' + LINE
+
+# == End Init ==========================================================================================
+
+# ==== Problem 1.2 ====
+
+distbtn_t0 = [  0.5 ,  0.5 ] # The last distribution
+distbtn_t1 = [ -1   , -1   ] # The distribution being calculated
+condPass =   [  0.8 ,  0.4 ] # The probability of passing giving the previous state [pass,fail]
+
+tolerance = 0.0001
+iterCount = 0
+
+sep('Iterating distribution until convergence ...')
+while ( abs(distbtn_t0[0]-distbtn_t1[0]) > tolerance ):
+    iterCount += 1
+    distbtn_t0 = distbtn_t1[:] # Store a copy of the previously computed distribution to t0
+    # compute new distribution
+    distbtn_t1[0] = distbtn_t0[0]*condPass[0] + distbtn_t0[1]*condPass[1]
+    distbtn_t1[1] = 1 - distbtn_t1[0]
+    
+print 'Iterated until convergence, distribution: ',distbtn_t1,'achieved after',iterCount,'iterations.', endl
+
+distbtn_t0 = [  0.5 ,  0.5 ] # The last distribution
+distbtn_t1 = [ -1   , -1   ] # The distribution being calculated
+
+N = 0
+trials = 10000
+
+lastPass = True
+nextPass = None
+numPass = 0
+numFail = 0
+
+sep('Simulating distribution until convergence ...')
+for i in range(trials):
+    N += 1
+    distbtn_t0 = distbtn_t1[:] # Store a copy of the previously computed distribution to t0
+    diceroll = random.random()
+    index = 0 if lastPass else 1 # Choose first index if she passed last term, otherwise choose second
+    nextPass = diceroll <= condPass[index]
+    if nextPass:
+        numPass += 1
+    else:
+        numFail += 1
+    distbtn_t1[0] = numPass / N
+    distbtn_t1[1] = numFail / N
+    lastPass = nextPass
+        
+print 'Simulated for',trials,'iterations, distribution: ',distbtn_t1,'achieved after',N,'iterations.', endl
+
+# ==== End 1.2 ====
+
+\end{lstlisting}
+
+\end{document}

@@ -1,0 +1,248 @@
+\documentclass[fleqn]{hermans-hw}
+
+\usepackage{notes}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{verbatim} % for block comments
+\title{HW2: Constraint Satisfaction Problems}
+\duedate{Collaborator: Tyler Jones}
+\class{CS6300, Spring 2016}
+\institute{University of Utah}
+\author{James Watson, u1015536}
+
+% IF YOU'RE USING THIS .TEX FILE AS A TEMPLATE, PLEASE REPLACE
+% The author WITH YOUR NAME AND UID.
+% Replace the due date with anyone you worked with i.e. "Worked with: John McCarthy, Watson, & Hal-9000"
+\begin{document}
+\maketitle
+\section{Crossword Puzzles Part I}
+
+Consider the problem of fitting words into a rectangular grid. The grid, which is given as part of the problem, specifies which squares can contain letters and which squares cannot contain letters. Assume also that a dictionary of allowed words is provided. The task is to fill in the blank squares using any subset of the list.
+\begin{enumerate}
+\item \textit{Formulate this problem as a CSP where the variables are words. List all the variables, domain and constraints.}\\
+\textbf{Answer}:\\
+\underline{Variables}: $ X = \lbrace word \,\in \, dictionary \rbrace $\\
+\underline{Domain}: $ D = \lbrace$ answer spaces, each consisting of a group of open squares that sequentially border each other in a single row or column  $ \rbrace $\\
+\underline{Constraints}: Implicit,\\
+$ (word_{i} \, , \, answer\,space_{j}) \, | \, length(word_{i}) == length(answer\,space_{j})$\\
+When an open space is shared by two answer spaces, the letter at that intersection must be the same in both answer spaces.
+\item \textit{Formulate this problem as a CSP where the variables are letters. List all the variables, domain and constraints.}\\
+\textbf{Answer}:\\
+\underline{Variables}: $ X = \lbrace$answer spaces, each consisting of a group of open squares that sequentially border each other in a single row or column$ \rbrace $\\
+\underline{Domain}:  $ D = \lbrace word \,\in \, dictionary \rbrace $\\
+\underline{Constraints}: Implicit,\\
+$ (word_{i} \, , \, answer\,space_{j}) \, | \, length(word_{i}) == length(answer\,space_{j})$\\
+When an open space is shared by two answer spaces, the letter at that intersection must be the same in both answer spaces.
+\item \textit{Words $w_{1}$ and $w_{2}$ are too similar if \emph{either} one can be
+obtained from the other by changing exactly one character \emph{or}
+one is a substring of the other.  %For instance ``dog'' and ``dogs''
+%are too similar (by the second constraint) as are ``dog'' and ``dog''
+%(again, by the second constraint).  Similarly, ``cats'' and ``cots''
+%are too similar (by the first constraint).  
+How would you specify
+these additional constraints in both the by-word and by-letter
+formulations?}\\
+\textbf{By Word}: $(w_{1}\, , \, w_{2}) \, | \, diffLetterCount(w_{1}\, , \, w_{2}) \geq 2$\\
+$(w_{1}\, , \, w_{2}) \, | \, \neg is\_A\_substring\_of\_B(w_{1}\, , \, w_{2}) $\\
+$(w_{1}\, , \, w_{2}) \, | \, \neg is\_A\_substring\_of\_B(w_{2}\, , \, w_{1}) $\\
+\textbf{By Letter}: $$ (w_{1}, \, w_{2}) \, | \, \sum_{i=0}^{n}diff(w_{1}[i],w_{2}[i]) \geq 2 , \, n=max(len(w_{1}),len(w_{2}))-1$$  \\
+The above assumes that similarities between the two strings begin at the same index. If a differing letter prefixes the similar sequence in one word but not the other, the procedure will return a higher letter difference than actual and the condition will be incorrectly satisfied in some cases.
+
+
+\end{enumerate}
+
+\section{Arc Consistency}
+
+Alice decides that she wants to get a minor in math.  All that remains are the following courses:
+\begin{itemize}
+	\item She must take both Analysis (A) and Analysis II (B). \\ 
+	\item Three electives of which she must take two; these are: \\
+		\{ Linear Algebra (C), Number Theory (D) and Modern Algebra (E) \} \\
+\end{itemize}
+Alice has three more semesters of study to go.
+Every course is offered every semester.
+
+Constraints on how she must take the courses:
+\begin{itemize}
+	\item She must take Analysis (A) before Analysis II (B)
+	\item She must take Linear Algebra (C) before Modern Algebra (E)
+	\item She must take Modern Algebra (E) before Number Theory (D)
+	\item She cannot take both Analysis (A) and Linear Algebra (C) in the same semester
+	\item She can take at most two math courses during any given semester
+\end{itemize}
+
+Formulate Alice's scheduling problem as a CSP:\\
+Variables are classes: $ V = \lbrace A,B,C,D,E  \rbrace $ \\
+
+% Feel free to comment out the problem definition above for your
+% handin
+
+\begin{enumerate}
+\item \textit{Find an assignment of the variables to values (just by trial and
+error) that satisfies the constraints.}\\
+\textbf{Answer}: A = 2 , B = 3 , C = 1 , D = 3 , E = 2
+
+\item \textit{ State the domain of the variables and the constraints in
+mathematical notation using the following symbols: } $=, \neq, <, >,
+\leq, \geq$. \\
+\textbf{Answer}:\\
+Domain is semesters: $D=$ \{ 1 , 2 , 3 , $\infty$ \} \\
+Constraints: $ A < \infty, \ B < \infty, \ A < B, \  C < E \vee C=E=\infty,$ \\ $ \ E < D \vee E=D=\infty, \ A \neq C,$ \\ 
+$ \forall \, i \in \lbrace 1,2,3  \rbrace \, | \, countSameAs\_i\_InList(i,[A,B,C,D,E]) \leq 2$\\
+$countSameAs\_i\_InList(\infty,[C,D,E]) \leq 1$
+
+
+\item \textit{We now solve this CSP using backtracking search with arc
+consistency.}
+
+% \pagebreak
+
+\begin{enumerate}
+\item \textit{What are the remaining domains after enforcing arc consistency on
+the initial CSP with no assignments? (Preprocessor)} \\
+\textbf{Answer}: \\
+$ A \in \lbrace 1,2 \rbrace, 
+\ B \in \lbrace 2,3 \rbrace, 
+\ C \in \lbrace 1,2,3,\infty \rbrace, 
+\ D \in \lbrace 3,\infty \rbrace, 
+\ E \in \lbrace 2,3,\infty \rbrace$\\
+A and B must have an assignment less than $\infty$. A cannot be 3 because it must be less than B. B can't be 1 because it must be greater than A. C has no restrictions imposed by E because neither is required. If E is taken, it must follow C, so E cannot be assigned 1. If D is taken, it must follow E, so D cannot be assigned a value smaller or equal to the least possible value of E.
+
+\item \textit{What are the remaining domains after assigning $A=1$ and
+re-enforcing arc consistency?}\\
+\textbf{Answer}:\\
+$ A = 1, 
+\ B \in \lbrace 2,3 \rbrace, 
+\ C \in \lbrace 2,3,\infty \rbrace, 
+\ D \in \lbrace \infty \rbrace, 
+\ E \in \lbrace 3,\infty \rbrace$\\
+1 is removed from C, which cannot have the same value as A. Now that 2 is the lowest in C, E cannot be assigned to 2. Likewise, D cannot be assigned to a semester because E can only be assigned 3 if it is taken.
+
+\item What about after assigning A = 1 and B = 2?\\
+$ A = 1, 
+\ B = 2, 
+\ C \in \lbrace 2,3,\infty \rbrace, 
+\ D \in \lbrace \infty \rbrace, 
+\ E \in \lbrace 3,\infty \rbrace$\\
+There is no loss of domain in any variable other than B.
+\end{enumerate}
+
+
+\item  \textit{Suppose we're running AC-3 but
+trying to get Alice to finish in two semesters.
+Sketch a complete run of AC-3 and say precisely when it will fail and how many states are expanded before failing.} \\
+\textbf{Answer}: \\
+For the problem stated, AC-3 fails after expanding 11 states (Step (k), below).  Some of these states are duplicates.  After 11 states are expanded, no assignment that is consistent with the binary constraints satisfies the global constraint that requires Alice to take 2 electives in two semesters.
+
+\textbf{AC-3 Sketch}: \\ Init all arcs:\\
+Queue: \{ (A),(B),(A,B),(C,E),(E,D),(A,C) \}\\
+\begin{enumerate}
+	\item pop (A) \\
+	$\langle(A), \, \lbrace (1,2,\infty) \rbrace \rangle$\\
+	and enforce consistency, $A < \infty$ \\
+	$\langle(A), \, \lbrace (1,2) \rbrace \rangle$\\
+	The global constraints that no more than two variables can have the same semester assignment and that two electives must be taken won't be broken down into binary constraints for this assignment, so I will just check them each loop.
+	Domain changed, enqueue back-checks from A's neighbors.\\
+	Queue: \{ (B),(A,B),(C,E),(E,D),(A,C),(B,A),(C,A) \}\\
+	
+	\item pop (B) \\
+	$\langle(B), \, \lbrace (1,2,\infty) \rbrace \rangle$\\
+	and enforce consistency, $B < \infty$ \\
+	$\langle(B), \, \lbrace (1,2) \rbrace \rangle$\\
+	Global constraints met. Domain changed, enqueue back-checks from B's neighbors.\\
+	Queue: \{(A,B),(C,E),(E,D),(A,C),(B,A),(C,A),(A,B)\}\\
+	
+	% \pagebreak
+	
+	\item pop (A,B) \\
+	$\langle(A,B), \, \lbrace (1,1),(1,2),(2,1),(2,2) \rbrace \rangle$\\
+	and enforce consistency, $A < B$ \\
+	$\langle(A,B), \, \lbrace (1,2) \rbrace \rangle$\\
+	Global constraints met. Domain changed, enqueue back-checks from A's neighbors.\\
+	Queue: \{(C,E),(E,D),(A,C),(B,A),(C,A),(A,B),(B,A),(C,A)\}\\
+	
+	\pagebreak
+	
+	\item pop (C,E)\\
+	$\langle(C,E), \, \lbrace (1,1),(1,2),(1,\infty),(2,1),(2,2),(2,\infty),(\infty,1),(\infty,2),(\infty,\infty) \rbrace \rangle$\\
+	and enforce consistency, $ C < E \vee C=E=\infty$ \\
+	$\langle(C,E), \, \lbrace (1,2),(1,\infty),(2,\infty),(\infty,\infty) \rbrace \rangle$\\
+	Global constraints met. Domain changed, enqueue back-checks from C's neighbors.\\
+	Queue: \{(E,D),(A,C),(B,A),(C,A),(A,B),(B,A),(C,A),(E,C),(A,C)\}\\
+	
+	\item pop (E,D)\\
+	$\langle(E,D), \, \lbrace (1,1),(1,2),(1,\infty),(2,1),(2,2),(2,\infty),(\infty,1),(\infty,2),(\infty,\infty) \rbrace \rangle$\\
+	and enforce consistency, $ E < D \vee E=D=\infty$ \\
+	$\langle(E,D), \, \lbrace (2,\infty),(\infty,\infty) \rbrace \rangle$\\
+	Global constraints met. Domain changed, enqueue back-checks from E's neighbors.\\
+	Queue: \{(A,C),(B,A),(C,A),(A,B),(C,A),(E,C),(A,C),(C,E),(D,E)\}\\
+	
+	\item pop (A,C)\\
+	$\langle(A,C), \, \lbrace (1,1),(1,2),(1,\infty) \rbrace \rangle$\\
+	and enforce consistency, $ A \neq C $ \\
+	$\langle(A,C), \, \lbrace (1,2),(1,\infty) \rbrace \rangle$\\
+	Global constraints met. Domain changed, enqueue back-checks from C's neighbors.\\
+	Queue: \{(B,A),(C,A),(A,B),(C,A),(E,C),(A,C),(C,E),(D,E),(E,C),(A,C)\}\\
+
+	\item pop (B,A)\\
+	$\langle(B,A), \, \lbrace (2,1) \rbrace \rangle$\\
+	and enforce consistency, $ B > A $ \\
+	$\langle(B,A), \, \lbrace (2,1) \rbrace \rangle$\\
+	Global constraints met. Domain unchanged.\\
+	Queue: \{(C,A),(A,B),(C,A),(E,C),(A,C),(C,E),(D,E),(E,C),(A,C)\}\\
+	
+	\item pop (C,A)\\
+	$\langle(C,A), \, \lbrace (2,1),(\infty,1) \rbrace \rangle$\\
+	and enforce consistency, $ C \neq A $ \\
+	$\langle(C,A), \, \lbrace (2,1),(\infty,1) \rbrace \rangle$\\
+	Global constraints met. Domain unchanged.\\
+	Queue: \{(A,B),(C,A),(E,C),(A,C),(C,E),(D,E),(E,C),(A,C)\}\\
+
+	\item pop (A,B)\\
+	$\langle(A,B), \, \lbrace (1,2) \rbrace \rangle$\\
+	and enforce consistency, $ C \neq A $ \\
+	$\langle(A,B), \, \lbrace (1,2) \rbrace \rangle$\\
+	Global constraints met. Domain unchanged.\\
+	Queue: \{(C,A),(E,C),(A,C),(C,E),(D,E),(E,C),(A,C)\}\\
+	
+	\item pop (C,A)\\
+	$\langle(C,A), \, \lbrace (2,1),(\infty,1) \rbrace \rangle$\\
+	and enforce consistency, $ C \neq A $ \\
+	$\langle(C,A), \, \lbrace (2,1),(\infty,1) \rbrace \rangle$\\
+	Global constraints met. Domain unchanged.\\
+	Queue: \{(E,C),(A,C),(C,E),(D,E),(E,C),(A,C)\}\\
+	
+	\item pop (E,C)\\
+	$\langle(E,C), \, \lbrace (2,2),(2,\infty),(\infty,2),(\infty,\infty) \rbrace \rangle$\\
+	and enforce consistency, $ E > C \vee E=C=\infty $ \\
+	$\langle(E,C), \, \lbrace (\infty,2),(\infty,\infty) \rbrace \rangle$\\
+	Global constraints \textbf{failed}. \underline{At this point we now know that neither} \\ 
+	\underline{D (Step (e)) nor E (Step (k)) can be placed.  Now no schedule}\\ \underline{can be made that satisfies the 2-Electives Rule,}\\ $countSameAs\_i\_InList(\infty,[C,D,E]) \leq 1$.
+	
+\end{enumerate}
+
+
+
+
+\end{enumerate}
+
+
+\begin{comment}
+\section{Submission Instructions}
+
+\begin{enumerate}
+
+\item For the final submission you would be turning in a \textbf{PDF} document containing all your answers. No other submission format would be accepted. Please have your name written on top of the document. Replace the author name with your name and uID.
+
+\item If you collaborated with a friend or classmate in doing the HW, please specify their names on the top of this document too. We hate the discussion about cheating and so please save all of us the trouble and cite appropriate sources/names.
+
+\item Please ensure all the submissions are done through canvas. Please do not email the instructor or the TA with your submission. Submissions made via email would not be considered for grading.
+
+\item \textbf{Naming: }Your final upload should be named in the format $<uid>$-HW2.pdf where $<uid>$ is your Utah uid. \textbf{Ex:} u0006300-HW2.pdf
+
+\end{enumerate}
+\end{comment}
+
+
+
+\end{document}

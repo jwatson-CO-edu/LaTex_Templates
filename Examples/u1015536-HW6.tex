@@ -1,0 +1,133 @@
+\documentclass[fleqn]{hw6}
+
+\usepackage{notes}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+\usepackage{verbatim} % for block comments
+\usepackage[margin=0.5in]{geometry} % Override enormous margins! 
+
+\title{HW6: Bayesian Networks \& Independence}
+\duedate{Due: April 8, 2016}
+\class{CS6300: Artificial Intelligence, Spring 2016}
+\institute{University of Utah}
+\author{James Watson, u1015536}
+% IF YOU'RE USING THIS .TEX FILE AS A TEMPLATE, PLEASE REPLACE
+% The author WITH YOUR NAME AND UID.
+% Replace the due date with anyone you worked with i.e. "Worked with: John McCarthy, Watson, & Hal-9000"
+\begin{document}
+\maketitle
+
+% IF YOU'RE USING THIS .TEX FILE AS A TEMPLATE, PLEASE REPLACE
+% "CS5300, Spring 2009" WITH YOUR NAME AND UID.
+
+% Hand in at: http://www.cs.utah.edu/~hal/handin.pl?course=cs5300
+\section{Failing an Easy-A Class (20 pts)}
+\begin{itemize}
+	\item Only one in every 1000 students has ever gotten anything less than an A in Deb's classes.
+	\item Students often give bad teaching evals \textit{regardless of the reason}, about a ten percent of the time.
+	\item When a student does get less than an A, only 5\% will not give Deb a bad teaching eval. 
+\end{itemize}
+
+
+
+\begin{enumerate}
+\item \textit{Based on the above, give numeric values for \(P(LessThanA)\), \(P(BadEval)\) and \(P(BadEval | LessThanA)\).}\\
+\textbf{Answer}:\\
+
+$\displaystyle P(LessThanA) = \frac{1}{1000} = \boxed{0.001}$ 
+
+$\displaystyle P(BadEval) = \boxed{0.1} $
+
+$\displaystyle P(BadEval\, |\, LessThanA) = 1 - 0.05 = \boxed{0.95} $
+
+\item \textit{What is the probability that a student will give Deb a \(good\) teaching eval even though they got less than an A?}.\\
+\textbf{Answer}:\\
+
+$\displaystyle P(\neg BadEval\ |\ LessThanA) = 1 - P(BadEval\ |\ LessThanA) = 1 - 0.95 = \boxed{0.05}$, as above
+
+\item \textit{After the semester is over, Deb finds a student who gave her a bad teaching eval. What is the probability that Deb gave this student less than an A?} \\
+\textbf{Answer}:\\
+
+$\displaystyle  P(LessThanA\, |\, BadEval) =  \frac{P(LessThanA,BadEval)}{P(BadEval)} = \frac{P(LessThanA,BadEval)}{0.1} $,\\
+\vspace{6 bp}
+$\displaystyle  P(LessThanA,BadEval) = P(LessThanA)P(BadEval\, |\, LessThanA) = (0.001)(0.95) = 0.00095 $, \\
+\vspace{6 bp}
+$\displaystyle  P(LessThanA\, |\, BadEval) = \frac{0.00095}{0.1} = \boxed{0.0095} $,\\
+
+\end{enumerate}
+\section{Modeling Independence (36 pts)}
+\textit{Consider the following set up. A student is taking a class. }
+\begin{itemize}
+	\item The student might \textbf{S}tudy or not.
+	\item The student might \textbf{K}now-the-material or not.
+	\item The student might \textbf{P}ass or not. 
+\end{itemize}  
+
+{\Large \textcircled{\normalsize S}} $ \rightarrow $ {\Large \textcircled{\normalsize K}} $ \rightarrow $ 
+{\Large \textcircled{\normalsize P}} \\
+$\ $ \\ % force an "empty" line
+
+\textit{For each of the following independence/conditional independence claims, state whether or not you think it is true and provide a one-sentence justification.}
+\begin{enumerate}
+\item \( S \perp K\), $ P(s,k) = P(s)P(k) $ ,  \boxed{\text{False}} , Studying might increase one's probability of knowing the material.
+\item \(S \perp P\), $ P(s,p) = P(s)P(p) $ ,  \boxed{\text{False}} , Studying might increase one's probability of passing.
+\item \(K \perp P \), $ P(k,p) = P(k)P(p) $ ,  \boxed{\text{False}} , Knowing the material might increase one's probability of passing.
+\item \(P \perp S\, |\, K\) , $ P(p,s\, |\, k) = P(p\, |\, k)P(s\, |\, k)$ , \boxed{\text{True}} , One studies to know the material, and one passes when one knows the material, and studying does not have another influence on passing. 
+\item \(P\perp K\, |\, S\) , $ P(p,k\, |\, s) = P(p\, |\, s)P(k\, |\, s)$ , \boxed{\text{False}} , Knowing the material increases the likelihood that the student passes, and a student that knows the material without studying is likely to pass.
+\item \( S\perp K\, |\, P\) , $ P(s,k\, |\, p) = P(s\, |\, p)P(k\, |\, p)$ , \boxed{\text{False}} , Studying the material increases the likelihood of knowing the material, though a student still has a chance of failing if they know the material.
+\end{enumerate}
+
+\section{Independence in Joint Probability Tables(44 pts)}
+Suppose we have a three variable model with variables \(A, B,\) and \(C\). We assume \(p(A, B, C) = p(A)p(B | A)p(C | B)\).
+\begin{enumerate}
+\item \textit{What (conditional) independence assumptions are made by the assumption of how this distribution factorizes?}\\
+\textbf{Answer}: From the Chain Rule, we can infer {\Large \textcircled{\normalsize A}} $ \rightarrow $ {\Large \textcircled{\normalsize B}} $ \rightarrow $ 
+{\Large \textcircled{\normalsize C}} , A and C are conditionally independent because B blocks the causal chain. \\
+
+\item \textit{Write out the full joint distribution based on the conditional probability tables shown below}
+\end{enumerate}
+
+\(p(A):\) \begin{tabular}[t]{c|c}
+  \(A\) & \(p\) \\\hline
+  T & 3/4 \\
+  F & 1/4
+\end{tabular}
+\(\quad p(B|A):\)
+ \begin{tabular}[t]{c|c|c}
+  \(A\) & \(B\) & \(p\) \\\hline
+  T & T & 1/2 \\
+  T & F & 1/2 \\
+  F & T & 2/3 \\
+  F & F & 1/3
+\end{tabular}
+\(\quad p(C|B):\)
+ \begin{tabular}[t]{c|c|c}
+  \(B\) & \(C\) & \(p\) \\\hline
+  T & T & 1/5 \\
+  T & F & 4/5 \\
+  F & T & 3/4 \\
+  F & F & 1/4 \\
+\end{tabular} $\ $ \\ % force an "empty" line
+$\ $ \\ % force an "empty" line
+$\ $ \\ % force an "empty" line
+\textbf{Answer}: 
+\fbox{
+	\(\quad p(A,B,C):\)
+	\begin{tabular}[t]{c|c|c|lc}
+		\(A\) &\(B\) & \(C\) & \(p\) \\
+		\cline{1-4}
+		T & T & T & 0.075   & $ = (3/4)(1/2)(1/5) $ \\
+		T & T & F & 0.3     & $ = (3/4)(1/2)(4/5) $ \\
+		T & F & T & 0.28125 & $ = (3/4)(1/2)(3/4) $ \\
+		T & F & F & 0.09375 & $ = (3/4)(1/2)(1/4) $ \\
+		F & T & T & 0.03333 & $ = (1/4)(2/3)(1/5) $ \\
+		F & T & F & 0.13333 & $ = (1/4)(2/3)(4/5) $ \\
+		F & F & T & 0.0625  & $ = (1/4)(1/3)(3/4) $ \\
+		F & F & F & 0.02083 & $ = (1/4)(1/3)(1/4) $ \\ 
+	\end{tabular}
+}\\ % force an "empty" line
+$\ $ \\ % force an "empty" line
+Check: $ 0.075 + 0.3 + 0.28125 + 0.09375 + 0.03333 + 0.13333 + 0.0625 + 0.02083 = 0.99999 \approx 1 $ , All probabilities sum to 1.
+\end{document}

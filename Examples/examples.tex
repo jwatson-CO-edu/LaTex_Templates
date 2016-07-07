@@ -1,0 +1,184 @@
+%%   The % symbol acts as a comment flag in LaTeX
+%%   This header area specifies document style options
+
+%%   The document class is 'article' (vs. book, slides, etc.)
+%%   We'll specify some article attributes: 8.5x11 (letter) paper, 10 point font
+\documentclass[letterpaper,10pt]{article}
+\linespread{1.6}
+
+%%   We won't use these, but they can be used to generate a title page.
+\title{Latex Examples}
+\author{Spencer Breiner}
+
+
+%%   We will need some additional packages for symbols and diagrams
+%%   Basic packages from the American Mathematical Society. For equations and symbols.
+\usepackage{amsmath, amssymb}
+%%   For commutative diagrams. There is another diagrams package called 'array' that you can also try.
+\usepackage[all, cmtip]{xy}
+
+
+%%   You can easily set custom commands for expressions you use frequently
+%%   To set commands whose tags are not predefined, us '\newcommand'. Latex tags must begin with a '\'.
+\newcommand{\Sets}{\textbf{Sets}}
+\newcommand{\<}{\langle}
+
+%%   If you want to override and existing command, use '\renewcommand'.
+\renewcommand{\>}{\rangle}
+
+%%   You can also create new commands with parameters.
+%%   \newcommand{your_command}[number of parameters]{output with parameters #n}
+\newcommand{\expSum}[3]{#1^{#2+#3}}
+
+%%   Now entering \expSum{a,b,c} (in math mode) will output as 'a' raised to the exponent of 'b+c'.
+
+
+
+\newcommand{\bsl}{\textbackslash}
+
+
+
+
+
+\begin{document}
+
+
+%%   '\begin{...}' and '\end{...}' tags create new environments in your LaTeX document.
+
+%%    Large, bold, centered title
+\begin{center}
+\LARGE\textbf{LaTeX examples}\normalsize
+
+%%   '\textbf' for Boldface. You can also use '\textit' for italics and '\textrm' for roman (e.g., inside equations)
+%%   Text size can be set with commands like /small, /normalsize, /large, /Large, /LARGE
+
+\textbf{Be sure to read along with the comments in the \TeX{} file for this document.}
+\end{center}
+
+Every \LaTeX{} document begins with a ``header'' area specifying document-wide options. Look at the comments in the header for this .tex file for help with these options.
+
+Your actual output lives between \bsl begin\{document\} and \bsl end\{document\} tags. These open and close a ``document'' environment in your \TeX{} file. Other sorts of environments include formatting (e.g., text alignment) and structured outputs (e.g., tables or theorems).
+
+Inside the document environment, simple text will show up as an ordinary paragraph.
+Note that a single line break in your \TeX{} file will \emph{not} produce a line break in output.
+
+To split two paragraphs in the output, leave a line of whitespace between them in your input file.
+
+
+
+
+
+Also notice             that                     \LaTeX{} ignores extra whitespace between words and paragraphs. In order to insert extra line breaks, use double backslashes `\bsl\bsl'.
+\\ \\
+
+%%        WARNING!!!
+%%        In this document, anything inside single quotes `...' is formatted for OUTPUT,
+%%        not for input. For example, below our .tex file has the phrase
+%%              ``put `\$' characters around the input''
+%%        Since dollar sign is a special character, that will output to .pdf as
+%%              ``put `$' characters around the input''
+%%        As you can see below, the valid input $x^2>2y$ does NOT include backslashes.
+
+
+
+In order to output mathematical symbols and formulas, put `\$' characters around the input. This tells \LaTeX to enter ``math mode''. For example, $x^2>2y$ or $H(A)=A\otimes B$. In order to display a formula centered on its own line, use `\$\$':
+$$F(x)+C=\int_0^x \frac{dF}{dx} dx.$$
+There are an enormous number of symbols available in math mode. I recommend using a designated \LaTeX manager like \TeX maker (free, cross-platform); these have GUI panels so that you don't have to remember all the \TeX commands.\\\\
+
+Any time you need to group an expression in math mode (for example, a complicated exponent or subscript), enclose the expression within curly braces \{...\}: for example $2^{n(n-1)}$.
+\\\\
+
+\Large \textbf{Tables} \normalsize
+
+There are (at least) two other constructions that you will need to typeset your homeworks. The first is creating a table. For this we use the `tabular' environment.\\
+
+\begin{tabular}{l|cr|}
+1st column& 2nd & 3rd \\
+\hline
+left aligned& centered& right aligned\\
+\hline
+\end{tabular}\\
+
+The tabular environment requires a parameter consisting of a string of letters `l', `c' and `r'. The length of the string gives the number of columns, and the corresponding letter sets each column's alignment to left, center or right. Inserting a `$\mid$' character between two letters creates a vertical line between the corresponding columns. The `\bsl hline' command can be used to insert horizontal lines between rows.
+
+Inside the table the `\&' character is used to divide adjacent columns, and a double backslash `\bsl\bsl' starts a new row.
+
+The `array' environment is very similar, but used in math mode. This is often useful for typesetting strings of equations:
+$$\begin{array}{rcl}
+\int_0^{2\pi} \sin(x) dx &=& \int_0^{\pi} \sin(x) dx + \int_\pi^{2\pi} \sin(x) dx \\
+&=& \int_0^{\pi} \sin(x) dx + \int_\pi^{2\pi} -\sin(x-\pi) dx\\
+&=& \int_0^{\pi} \sin(x) dx - \int_0^{\pi} \sin(y) dy\\
+&=&0.\\
+\end{array}$$
+
+\Large \textbf{Commutative Diagrams} \normalsize
+
+For typesetting commutative diagrams, we use the `\bsl xymatrix' command. The syntax is similar to that for tables. We create a grid using `\&' and `\bsl\bsl', and each grid space is a potential spot for an object in our diagram.
+$$\xymatrix{
+A & B &    \\
+C\otimes D^E &   & F. \\
+}$$
+
+We create arrows using the syntax `\bsl ar[dir]'. This creates an arrow beginning at the current grid entry. `dir' specifies the length and direction of the arrows as a string of letters `r', `u', `l' and `d'. For example, the command `\bsl ar[urr]' would create an arrow which goes up one grid space and right two. Be careful! If you \LaTeX will throw an error if your arrow goes out of the grid.
+$$\xymatrix{
+A \ar[r] \ar[d] & B \ar[rd] \\
+C\otimes D^E \ar[rr]       &           & F. \\
+}$$
+
+You can add a label to your arrow using a caret `$\wedge$' or an underscore `\_'. Group together complicated labels inside curly braces \{...\}.
+$$\xymatrix{ A \ar[r]^f & B & C \ar[r]_{g+h} & D.}$$
+By default, labels will center between grid spaces, but this looks bad when objects have different sizes. You can control the placement of the label along the arrow by inserting a parenthesized decimals `(.xx)' between the caret and the label. 
+$$\xymatrix{A \ar[r]^{f} & B\times C\times D & A \ar[r]^(.3){f} & B\times C\times D.}$$
+
+You can use the special attributes `@=', `@R=' and `@C=' to control the grid spacing in total, or independently for rows and columns:
+
+\begin{tabular}{|c|c|c|}
+Normal&@=10pt&@C=10pt\\\hline
+$\xymatrix{ A \ar[r] \ar[d] & B \ar[d]\\ C \ar[r] & D}$ &$\xymatrix@=8pt{ A \ar[r] \ar[d] & B \ar[d]\\ C \ar[r] & D}$ & $\xymatrix@C=10pt{ A \ar[r] \ar[d] & B \ar[d]\\ C \ar[r] & D}$\\
+\end{tabular}\\
+
+
+There are a number of modifications that one can make to the arrows in your diagram. Some of the more useful ones are listed below. Look at the .tex file for the associated syntax.
+
+\begin{tabular}{c|c}
+Modification & Examples \\\hline
+Heads and tails & $\xymatrix{ A \ar@{>->}[r] & B}$ \\
+		& $\xymatrix{ A \ar@[->>][r] & B}$ \\\hline
+Arrow		& $\xymatrix{ A \ar@{-->}[r] & B}$ \\
+		& $\xymatrix{ A \ar@{<=>}[r] & B}$\\\hline
+Curved		& $\xymatrix{ A \ar@/_/[r] & B}$\\
+		& $\xymatrix{ A \ar@/^/[r] & B}$\\
+		& $\xymatrix{ A \ar@/^15pt/[r] & B}$\\\hline
+Shifted/Parallel& $\xymatrix{ A \ar@<5pt>[r] \ar@<-5pt>[r] & B.}$\\
+\end{tabular}
+
+A few more tricks. 
+
+Often we want to place a symbol in the center of a commutative square. To do this, we create an invisible arrow across the center of the square and label it with the symbol that we want to place:
+$$\xymatrix{
+A \ar[r] \ar[d]             & B \ar[d] \\
+C \ar[r] \ar@{}[ru]|{\circ} & D \\
+}$$
+
+Sometimes you want to typeset a diagram so that it looks 3-dimensional. For this it's nice to `break' an arrow so that it goes behind another. There are two ways to do this, both used below. 
+
+On one hand, we can draw an arrow that visits several objects using the syntax `\bsl ar'[dir1]'[dir2]...':
+$$\xymatrix{
+A \ar'[rd]'[rr][rrrd] &   & C & \\
+                     & B &   & D. \\
+}$$
+The back vertical line in the diagram below is typeset by `\bsl ar'[d][dd]'.
+
+There is another hack that is easier but won't always work. Using `$\mid$' rather than `$\wedge$' or `\_' inserts a label into the middle of an arrow; if we fill that label with a blank space this produces a break (using `\bsl\ ', that's ``backslash space''). The back horizontal arrow below is typeset by `\bsl ar$\mid$\{\bsl\ \}'.
+
+
+
+
+$$\xymatrix{
+A' \ar[rr] \ar[dd] \ar[rd]	&			& B' \ar'[d][dd] \ar[rd]	&		\\
+				& A \ar[rr] \ar[dd]	&				& B \ar[dd]	\\
+    C' \ar|{\ \ }[rr] \ar[rd]	&			& D' \ar[rd]			&		\\
+				& C  \ar[rr]		&				& D.		\\
+}$$
+
+\end{document}

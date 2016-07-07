@@ -1,0 +1,229 @@
+\documentclass[fleqn]{hermans-hw}
+
+%\usepackage{haldefs}
+\usepackage{notes}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{verbatim} % for block comments
+\title{HW1: Search}
+\duedate{Collaborator: Tyler Jones}
+\class{CS6300: AI, Spring 2016}
+\institute{University of Utah}
+\author{James Watson, u1015536}
+% REPLACE
+% The author WITH YOUR NAME AND UID.
+% Replace the due date with anyone you worked with i.e. "Worked with: John McCarthy, Watson, & Hal-9000"
+
+\begin{document}
+
+\maketitle
+\section{Graph Search (60pts)}
+
+Alice starts in the lecture hall (the ``start'' state below) and wants to make it to Alta (the ``goal'' state) as soon as possible. See graph below:
+
+\includegraphics[width=0.5\textwidth]{hw1-statespace}
+
+The available actions at each state are denoted by arrows with a path cost label above each arrow.  For each of the following graph search
+strategies, the order in which states are expanded as well as the path returned by graph search Are shown below.  
+
+When choosing an arbitrary order of state expansions (to break ties), use an alphabetical ordering.  In graph search, states are expanded only once.
+
+% If you write your solution inline, feel free to comment out all of
+% the problem definition above (especially the figure, which you
+% probably won't have a copy of!).
+
+\begin{enumerate}
+\item (10pts) == Greedy Search (Cost) ==
+
+Greedy search is a best-first search that uses only the cost.  The node on the edge with the least cost is expanded first.
+
+\begin{itemize}
+	\item Search
+	\begin{enumerate}
+		\item At Start with children A (g=3) and B (g=2). Choose B.
+		\item At B with children C(g=2) , D(g=1) , Goal(g=4). Choose D.
+		\item At D with child Goal(g=5). Choose Goal.
+		\item End at Goal
+	\end{enumerate}
+	\item \textbf{Path}: $\mathbf{(Start \rightarrow B \rightarrow D \rightarrow Goal, 8)}$
+\end{itemize}
+
+\item (10pts) == Depth first search == 
+
+Depth-first search will expand the first child node, then proceed with the first grandchild node, and so on until the goal or a leaf is reached. Expand previous branch if not goal.
+
+\begin{itemize}
+	\item Search
+	\begin{enumerate}
+		\item At Start with children A and B. Not considering heuristic or cost so choose A alphabetically.
+		\item At A and the only outgoing edge leads to Goal. Choose Goal
+		\item End at Goal.
+	\end{enumerate}
+	\item \textbf{Path}: $\mathbf{(Start \rightarrow A \rightarrow Goal, 6)}$
+\end{itemize}
+
+\item (10pts) == Breadth First Search ==
+
+Breadth-first search will expand all the children at each level until the goal is found or all nodes are exhausted.
+
+\begin{itemize}
+	\item Search
+	\begin{enumerate}
+		\item At Start with children A and B.
+		
+		Frontier: [A,B]
+		
+		\item Expand both, starting with A.
+		
+		Frontier: [Goal,C,D,Goal]
+		
+		\item Reached the goal during the expansion of A.
+		
+	\end{enumerate}
+	\item \textbf{Path}: $\mathbf{(Start \rightarrow A \rightarrow Goal, 6)}$
+\end{itemize}
+
+\item (10pts) == Uniform Cost Search ==
+
+Uniform cost search expands the node with the lowest total cost.
+
+\begin{itemize}
+	\item Search
+	\begin{enumerate}
+		\item At Start (g = 0). Push onto frontier. \\
+		Frontier: [ Start ]
+		
+		\item Pop Start.  It is explored.  Push children onto frontier.\\
+		Frontier: [ A(g=3) , B(g=2) ]
+		
+		\item Pop lowest-cost node, B. Push children onto frontier.\\
+		Frontier: [ A(g=3) , C(g=4) , D(g=3) , Goal(g=6) ]
+		
+		\item Two lowest items in queue are A and D. Alphabetically pop A. Push child onto frontier, replacing the duplicate Goal state. \\
+		Frontier: [ C(g=4) , D(g=3) , Goal(g=6) ]
+		
+		\item Pop the lowest-cost node, D. Push child onto frontier. \\
+		Frontier: [ C(g=4) , Goal(g=6) , Goal(g=8) ]
+		
+		\item Pop the lowest-cost node, C. Push child onto frontier.\\
+		Frontier: [ Goal(g=6) , Goal(g=8) , Goal(g=5) ]
+		
+		\item The lowest item in the queue is the C path to Goal. Pop it. Solution satisfied.
+		
+	\end{enumerate}
+	\item \textbf{Path}: $\mathbf{(Start \rightarrow B \rightarrow C \rightarrow Goal, 5)}$
+\end{itemize}
+
+\item (10pts) == Greedy Search (heuristic) ==
+
+Greedy search is a best-first search that uses only the heuristic.  The node with the least heuristic is expanded first.
+
+\begin{itemize}
+	\item Search
+	\begin{enumerate}
+		\item At Start with children A (h=2) and B (h=3). Choose A.
+		\item At A and the only outgoing edge leads to Goal. Choose Goal
+		\item End at Goal.
+	\end{enumerate}
+	\item \textbf{Path}: $\mathbf{(Start \rightarrow A \rightarrow Goal, 6)}$
+\end{itemize}
+
+
+\item (10pts) == A* Search ==
+
+A* search is identical to UCS except that $$ f(n) = \left[\sum_{i=1}^{n}g(i)\right] + h(n)  $$ replaces $ g(n) $ in the queue prioritization. The total cost to a node is shown as tg.
+
+\begin{itemize}
+	\item Search
+	\begin{enumerate}
+		\item At Start (f = 0). Push onto frontier. \\
+		Frontier: [ Start ]
+		
+		\item Pop Start.  It is explored.  Push children onto frontier.\\ 
+		Frontier: [ A(f=5,tg=3) , B(f=5,tg=2) ]
+		
+		\item A and B have identical cost f=5. Alphabetically pop A. Push child onto frontier.\\
+		Frontier: [ B(f=5,tg=2) , Goal(f=6,tg=6) ]
+		
+		\item Pop lowest cost item, B. Push children onto frontier.\\ Frontier: \newline
+		[Goal(f=6,tg=6) , C(f=5,tg=4) , D(f=4,tg=3) , Goal(f=6,tg=6)]
+		
+		\item Pop lowest cost item, D. Push child onto frontier. \newline
+		[Goal(f=6,tg=6) , C(f=5,tg=4) , Goal(f=6,tg=6) , Goal(f=8,tg=8)]
+		
+		\item Pop lowest cost item, C. Push child onto frontier.\newline
+		[Goal(f=6,tg=6) , Goal(f=6,tg=6) , Goal(f=8,tg=8) , Goal(f=5,tg=5)]
+		
+		\item Pop the lowest cost item, Goal. Solution satisfied.
+		
+	\end{enumerate}
+	\item \textbf{Path}: $\mathbf{(Start \rightarrow B \rightarrow C \rightarrow Goal, 5)}$
+\end{itemize}
+
+\end{enumerate}
+
+For uniform cost search, greedy search and A* search please mention the final cost also in the solution. Your final solution for these questions should be of the form (Path, Cost to Goal)\\
+Ex: \textbf{(Start-X-Y-Z-Goal, 10)}
+
+
+\newpage
+\section{Downhill Skiing (40pts)}
+
+Alice begins with a velocity of $0$ and can safely maintain a maximum velocity of $V$.  At any state, she has three actions she can take: accelerate, decelerate or coast.  If she accelerates, her velocity increases by $1$; if she decelerates, it decreases by $1$; if she coasts, it stays the same.  \emph{After} her velocity is adjusted by her action, she moves downhill an equal number of squares to her current velocity.
+
+\includegraphics[width=0.5\textwidth]{hw1-skiing.pdf}
+
+Consider the above figure.  If Alice's first action is ``accelerate''
+then she will end up in the second square down with a velocity of
+$1$.  If she then ``coasts'' then she will end up in the third square
+down with a velocity of $1$.  If she ``accelerates'' again, she will
+end up in the fifth square down with a velocity of $2$.
+
+Alice's goal is to reach the chair lift (marked ``G'') with a velocity of zero.  (No, Alice cannot have negative velocities).  She would like to get there as quickly as possible.  However, if she has a non-zero velocity at the goal, she skies into the parking lot and destroys her skis.
+
+% Ditto about commenting out the problem definition above.
+
+\begin{enumerate}
+\item(10pts) \textit{If the mountain is $N$ units tall, what is the size of the state space? } \\
+\textbf{Answer: } $ N(V+1) $\\
+\textit{Justify your answer.  (You may ignore ``unreachable'' states.) } \\
+\textbf{Answer}: A state is a certain velocity at a certain square. The space of the problem is any velocity 0 to V at any square 1 to N, and does not include the time history of speeds. \\
+\textit{What are the start/goal states?}\\
+\textbf{Start}: Alice at square 0 with velocity 0.\\
+\textbf{Goal}: Alice at square N with speed 0.
+
+\item(10pts) \textit{Give an example of a state that is not reachable.}  \\
+\textbf{Answer}: A state in which Alice is already at velocity V one square down, for $ V > 1 $.\\
+\textit{Suppose that Alice cannot coast (she must either accelerate or decelerate): does this
+yield \emph{more} unreachable states?}\\
+\textbf{Answer}: No\\
+\textit{If so, give an example and justify your answer either way.}\\
+\textbf{Answer}: If Alice cannot coast, it is still possible for her to reach every square. If she accelerates from rest at square 1, then decelerates at square 2, she will come to rest. On the next turn, she can accelerate and move on. This sequence of actions is equivalent to coasting down the hill at velocity 1, but with extra 0 velocity states added.
+\item(10pts) \textit{Is Alice's current elevation (i.e., distance from the chair lift)
+an admissible heuristic?}  \\
+\textbf{Answer}: No\\
+\textit{Why or why not?}\\
+\textbf{Answer}: If we take the cost to be the number of turns to legally reach the bottom, then the elevation is not admissible. The plan that takes the maximum number of turns (without ``coasting at 0'' in any square) is the one in which Alice accelerates once first, then coasts until N, where she decelerates to a stop.  The number of turns remaining at any square during this plan is equal to the elevation.  All other legal, non-stop plans result in less turns, so the cost is overestimated.
+
+\item(10pts) \textit{State and justify a non-trivial, admissible heuristic for this
+problem which is \emph{not} current elevation.}\\
+\textbf{Answer}: An admissible heuristic is $ h(n) = \frac{N-n}{V} $, the distance (in squares) to the bottom of the hill divided by the maximum velocity. This heuristic represents the fewest turns (lowest cost) to the bottom square (or past the bottom square illegally).  Therefore this heuristic cannot overestimate cost.
+\end{enumerate}
+
+\begin{comment}
+\section{Submission Instructions}
+
+\begin{enumerate}
+
+\item For the final submission you would be turning in a \textbf{PDF} document containing all your answers. No other submission format would be accepted. Please have your name written on top of the document. Replace the author name with your name and uID.
+
+\item If you collaborated with a friend or classmate in doing the HW, please specify their names on the top of this document too. We hate the discussion about cheating and so please save all of us the trouble and cite appropriate sources/names.
+
+\item Please ensure all the submissions are done through canvas. Please do not email the instructor or the TA with your submission. Submissions made via email would not be considered for grading.
+
+\item \textbf{Naming: }Your final upload should be named in the format $<uid>$-HW1.pdf where $<uid>$ is your Utah uid. \textbf{Ex:} u0006300-HW1.pdf
+
+\end{enumerate}
+\end{comment}
+
+\end{document}

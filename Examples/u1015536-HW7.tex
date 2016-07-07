@@ -1,0 +1,235 @@
+\documentclass[fleqn]{hw7}
+
+\usepackage{notes}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\topmargin -1.5cm        % read Lamport p.163
+\oddsidemargin -0.04cm   % read Lamport p.163
+\evensidemargin -0.04cm  % same as oddsidemargin but for left-hand pages
+\textwidth 16.59cm
+\textheight 21.94cm
+\parskip 7.2pt           % sets spacing between paragraphs
+
+% == HW Repair ==
+\usepackage{verbatim} % for block comments
+\usepackage[margin=0.5in]{geometry} % Override enormous margins! 
+\usepackage[all, cmtip]{xy} % Graphs!
+\newcommand{\crcchr}[1]{{\Large \textcircled{\normalsize #1}}} % Circle a characher for diagrams/graphs
+% == End Repair ==
+
+\title{HW7: Inference in Bayesian Networks}
+\duedate{Due: April 15, 2016}
+\class{CS6300: Artificial Intelligence, Spring 2016}
+\institute{University of Utah}
+\author{Tucker Hermans}
+\begin{document}
+\maketitle
+
+\section{Sampling in an Alarm Network(40 pts)}
+Consider the Alarm Network; E.g. \textbf{18-BayesNets3.pdf, slide 10}.
+
+\xymatrix @-1pc {
+	\crcchr{B} \ar@{->}[rd] &  & \crcchr{E} \ar@{->}[ld]\\
+	&  \crcchr{A}  \ar@{->}[rd] \ar@{->}[ld] \\
+	\crcchr{J}  &  & \crcchr{M}
+}
+
+\begin{enumerate}
+\item \textit{Suppose we ran some sampling algorithm in this domain and gathered the following samples}:
+
+\begin{tabular}[h]{ccccc}
+\(\lnot b \) & \(\lnot e \) & \(\lnot a \) & \(\lnot j \) & \(\lnot m \) \\
+\(\lnot b \) & \(\lnot e \) & \( a \) & \( \lnot j \) & \(\lnot m \) \\
+\(\lnot b \) & \(\lnot e \) & \(\lnot a \) & \(  j \) & \(\lnot m \) \\
+\(\lnot b \) & \( e \) & \(  a \) & \(\lnot j \) & \( m \) \\
+\(\lnot b \) & \(\lnot e \) & \(\lnot a \) & \(\lnot j \) & \(\lnot m\) \\
+\(b \) & \(\lnot e  \) & \(\lnot a \) & \(\lnot j \) & \(m\) \\
+\(\lnot b \) & \( e \) & \(  a \) & \(   j \) & \(\lnot m\) \\
+\(\lnot b \) & \(\lnot e \) & \( a \) & \(  j \) & \( m\)
+\end{tabular}
+
+\textit{ Please estimate the following values }:
+\begin{enumerate}
+\item \(P(b) = 1/8 = \boxed{0.125} \)
+\item \(P(b|a) = 0/4 = \boxed{0.0} \)
+\item \(P(j|b) = 0/1 = \boxed{0.0} \)
+\item \(P(e|b, \lnot a) = 0/1 = \boxed{0.0} \)
+\end{enumerate}
+
+
+\item \textit{Do you think these samples are actually samples from the alarm network's probability distribution?
+Why or why not?}\\
+\textbf{Answer}:  No this collection of samples vastly overestimates the true probability of a burglary $P(B)=0.001$ and underestimates the probability that John will call given a burglary $ P(j|b) = (0.94)(0.9) = 0.846 $.\\
+
+\item \textit{Suppose that we had the following samples with likelihood weights.}
+
+\begin{tabular}[h]{cccccr}
+\(\lnot b \) & \(\lnot e \) & \(\lnot a \) & \(\lnot j \) & \(\lnot m \) &\hspace{2cm} 1.3\\
+\(\lnot b \) & \(\lnot e \) & \( a \) & \( \lnot j \) & \(\lnot m \) &\hspace{2cm} 2.3\\
+\(\lnot b \) & \(\lnot e \) & \(\lnot a \) & \(  j \) & \(\lnot m \) &\hspace{2cm} 0.2\\
+\(b \) & \( \lnot e \) & \(  \lnot a \) & \(\lnot j \) & \( m \) &\hspace{2cm} 1.1\\
+\(\lnot b \) & \(e \) & \(\lnot a \) & \(\lnot j \) & \(\lnot m\) &\hspace{2cm} 0.5\\
+\(b \) & \(\lnot e  \) & \(\lnot a \) & \(j \) & \(\lnot m\) &\hspace{2cm} 1.2\\
+\(\lnot b \) & \( e \) & \(  a \) & \(   j \) & \(\lnot m\) &\hspace{2cm} 5\\
+\(\lnot b \) & \(\lnot e \) & \( a \) & \(  j \) & \( m\) &\hspace{2cm} 0.01
+\end{tabular}
+
+\textit{Please estimate the following values}:
+\begin{enumerate}
+\item $\displaystyle P(b) = \frac{1.1 + 1.2}{1.3 + 2.3 + 0.2 +1.1 + 0.5 + 1.2 + 5 + 0.01} = \boxed{0.198} $
+\item $\displaystyle P(b|a) = \frac{0}{2.3 + 5 + 0.01} = \boxed{0} $
+\item $\displaystyle P(j|b) = \frac{1.2}{1.1 + 1.2} = \boxed{0.478} $
+\item $\displaystyle P(e|b, \lnot a) = \frac{0}{1.1 + 1.2} = \boxed{0} $
+\end{enumerate}
+
+\newpage % page break
+
+\item \textit{Suppose I wanted to estimate \(P(m | b)\). Would prior sampling work well in this case (why or why not)? What about rejection sampling? How many samples do you think you'd need to draw (order of magnitude) to get reasonable estimates for these two approaches?}\\
+\textbf{Answer}: 
+\begin{itemize}
+	\item Prior sampling would not work well because the prior events ($B$ and $E$) are so rare.
+	\item Rejection sampling would converge with much less stored data, but the large majority of samples would be rejected.
+	\item Prior sampling would consider a number of samples on the order of $1\times10^{6} = (1/0.001)(1/0.001)$ to begin collecting information on the relationship of all priors of $M$.
+	\item Rejection sampling would consider a number of samples on the order of $1\times10^{3} = (1/0.001)$, while rejecting a thousand times this number of samples.
+\end{itemize}
+
+
+ 
+
+\end{enumerate}
+
+\section{Decisions in Class (60 pts)}
+
+\includegraphics[width=0.4\textwidth]{mdp.pdf}
+
+Alice wants to model evil Clarence's  class as a Bayes net. There are two decisions she has to make. First, whether to study or not. Second, whether to sweet-talk Clarence or not. 
+\begin{itemize}
+	\item $ P(l|w) = 0.9 $, If she studies ($W$), she learns ($L$) the material with probability 0.9.
+	\item $ P(m|\neg w) = 0.01 $, If she does not study, she learns the material with probability 0.01
+	\item $ P(m|s) = 0.7 $, If she sweet-talks Clarence ($S$), he ends up in a good mood ($M$) with probability 0.7.
+	\item $ P(m|\neg s) = 0.5 $, If she does not sweet-talk Clarence, he is in a good mood with probability 0.5.
+\end{itemize}
+
+Whether she passes ($P$) or not depends on if she learns the material and if Clarence is in a good mood.
+\begin{itemize}
+	\item $ P(p\,|\,l,m) = 0.99 $, If they're both true, she passes with probability 0.99.
+	\item $ P(p\,|\,l,\neg m) = 0.8 $, If she learns the material but Clarence is in a bad mood, she passes with probability 0.8.
+	\item $ P(p\,|\,\neg l,m) = 0.5 $, If she doesn't learn the material, but Clarence is in a good mood, she passes with probability 0.5.
+	\item $ P(p\,|\,\neg l,\neg m) = 0.1 $, If she doesn't learn the material and Clarence is in a bad mood, she passes with probability 0.1.
+\end{itemize}
+  
+
+\begin{enumerate}
+\item \textit{Represent this situation as a Bayes net, complete with Conditional Probability Tables.}\\
+\textbf{Answer}: \\
+\fbox{
+$\displaystyle
+\xymatrix @-1pc {
+	\crcchr{W} \ar@{->}[d] &  & \crcchr{S} \ar@{->}[d] \\
+	\crcchr{L} \ar@{->}[rd] &  & \crcchr{M} \ar@{->}[ld] \\
+	 & \crcchr{P}  &  
+	 		\item 2016-08-DD $\mid$ Weighted search
+} 
+$
+\quad
+\begin{tabular}[t]{c|l}
+	$W$ & $P(L \mid W)$ \\ \hline
+	T   & 0.9 \\
+	F   & 0.01
+\end{tabular}
+\quad
+\begin{tabular}[t]{c|l}
+	$S$ & $P(M \mid S)$ \\ \hline
+	T   & 0.7 \\
+	F   & 0.5
+\end{tabular}
+\quad
+\begin{tabular}[t]{cc|l}
+	$L$ & $M$ & $P(P \mid L,M)$ \\ \hline
+	T   & T & 0.99 \\
+	T   & F & 0.8  \\
+	F   & T & 0.5  \\
+	F   & F & 0.1
+\end{tabular}
+}
+\item \textit{
+	Assume Alice\\ 
+	\begin{itemize}
+		\item $ P(s) = 0.2 $, sweet talks with probability \(0.2\) and
+		\item $ P(w) = 0.5 $, studies with probability \(0.5\)\\
+	\end{itemize}
+	Use variable elimination to find the probability of the actions she takes, given that she passes. } \\
+\textbf{Answer}: \\
+$ P(S,W \mid p) =\ ??$ \\
+
+$\ $ \\ % force an "empty" line
+
+Joint distribution for the actions that Alice takes:\\
+\begin{tabular}{cc|ll}
+	$S$ & $W$ & $P(S,W)$ & \\ 
+	\cline{1-3}
+	T   & T & 0.1  & $ =(0.2)(0.5) $\\
+	T   & F & 0.1  & $ =(0.2)(0.5) $\\
+	F   & T & 0.4  & $ =(0.8)(0.5) $\\
+	F   & F & 0.4  & $ =(0.8)(0.5) $
+\end{tabular}
+
+\begin{tabular}{ccc|ll}
+	$S$ & $W$ & $L$ & $P(L,S,W)$ & \\ 
+	\cline{1-4}
+	T   & T & T & 0.09 & $ =(0.1)(0.9) $\\
+	T   & T & F & 0.01 & $ =(0.1)(0.1) $\\
+	T   & F & T & 0.001 & $ =(0.1)(0.01) $\\
+	T   & F & F & 0.099 & $ =(0.1)(0.99) $\\	
+	F   & T & T & 0.36 & $ =(0.4)(0.9) $\\
+	F   & T & F & 0.04 & $ =(0.4)(0.1) $\\	
+	F   & F & T & 0.004 & $ =(0.4)(0.01) $\\
+	F   & F & F & 0.369 & $ =(0.4)(0.99) $	
+\end{tabular}
+
+\begin{tabular}{cccc|ll}
+	$S$ & $W$ & $L$ & $M$ & $P(L,S,W,M)$ & \\ 
+	\cline{1-5}
+	T   & T & T & T & 0.063 &$ =(0.09)(0.7) $\\
+	T   & T & T & F & 0.027 &$ =(0.09)(0.3) $\\
+	T   & T & F & T & 0.007 &$ =(0.01)(0.7) $\\
+	T   & T & F & F & 0.003 &$ =(0.01)(0.3) $\\
+	T   & F & T & T & 0.0007 &$ =(0.001)(0.7) $\\
+	T   & F & T & F & 0.0003 &$ =(0.001)(0.3) $\\
+	T   & F & F & T & 0.0693 &$ =(0.099)(0.7) $\\	
+	T   & F & F & F & 0.0297 &$ =(0.099)(0.3) $\\
+	F   & T & T & T & 0.18 &$ =(0.36)(0.5) $\\
+	F   & T & T & F & 0.18 &$ =(0.36)(0.5) $\\
+	F   & T & F & T & 0.02 &$ =(0.04)(0.5) $\\	
+	F   & T & F & F & 0.02 &$ =(0.04)(0.5) $\\	
+	F   & F & T & T & 0.002 &$ =(0.004)(0.5) $\\
+	F   & F & T & F & 0.002 &$ =(0.004)(0.5) $\\
+	F   & F & F & T & 0.1845 &$ =(0.369)(0.5) $\\	
+	F   & F & F & F & 0.1845 &$ =(0.369)(0.5) $	
+\end{tabular}
+
+\begin{tabular}{cccc|ll}
+	$S$ & $W$ & $L$ & $M$ & $P(p \mid L,S,W,M)$ & \\ 
+	\cline{1-5}
+	T   & T & T & T &  & $ =(0.063)(0.99) $\\
+	T   & T & T & F &  & $ =(0.027)(0.8) $\\
+	T   & T & F & T &  & $ =(0.007)(0.5) $\\
+	T   & T & F & F &  & $ =(0.003)(0.1) $\\
+	T   & F & T & T &  & $ =(0.0007)(0.99) $\\
+	T   & F & T & F &  & $ =(0.0003)(0.8) $\\
+	T   & F & F & T &  & $ =(0.0693)(0.5) $\\	
+	T   & F & F & F &  & $ =(0.0297)(0.1) $\\
+	F   & T & T & T &  & $ =(0.18)(0.99) $\\
+	F   & T & T & F &  & $ =(0.18)(0.8) $\\
+	F   & T & F & T &  & $ =(0.02)(0.5) $\\	
+	F   & T & F & F &  & $ =(0.02)(0.1) $\\	
+	F   & F & T & T &  & $ =(0.002)(0.99) $\\
+	F   & F & T & F &  & $ =(0.002)(0.8) $\\
+	F   & F & F & T &  & $ =(0.1845)(0.5) $\\	
+	F   & F & F & F &  & $ =(0.1845)(0.1) $	
+\end{tabular}
+
+\end{enumerate}
+
+\end{document}

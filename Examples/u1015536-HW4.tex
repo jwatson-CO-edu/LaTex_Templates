@@ -1,0 +1,310 @@
+\documentclass[fleqn]{hw4}
+
+\usepackage{notes}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\title{HW4: Markov Decision Processes}
+\duedate{Due: Mar 4, 2016}
+\class{CS6300: AI, Spring 2016}
+\institute{University of Utah}
+\author{James Watson}
+% IF YOU'RE USING THIS .TEX FILE AS A TEMPLATE, PLEASE REPLACE
+% The author WITH YOUR NAME AND UID.
+% Replace the due date with anyone you worked with i.e. "Worked with: John McCarthy, Watson, & Hal-9000"
+\begin{document}
+\maketitle
+
+% IF YOU'RE USING THIS .TEX FILE AS A TEMPLATE, PLEASE REPLACE
+% "CS5300, Spring 2009" WITH YOUR NAME AND UID.
+
+% Hand in at: http://www.cs.utah.edu/~hal/handin.pl?course=cs5300
+
+\section{Life as a Professor (30 pts)}
+
+Bob has constructed a Markov Process (note: no actions!) to represent the life of a professor.
+He has drawn the life of a professor in the following MP, where rewards are written on the states
+and transition probabilities are written on the arcs.  His start state is as an assistant professor.
+
+\begin{centering}
+\includegraphics[width=0.8\textwidth]{academic-life.pdf}  
+\end{centering}
+
+
+$$ T(s,s') = \begin{bmatrix}
+	p_{tt} & p_{tc} & p_{tf} & p_{th} & p_{td} \\
+	p_{ct} & p_{cc} & p_{cf} & p_{ch} & p_{cd} \\
+	p_{ft} & p_{fc} & p_{ff} & p_{fh} & p_{fd} \\
+	p_{dt} & p_{dc} & p_{df} & p_{dh} & p_{dd} \\
+	p_{ht} & p_{hc} & p_{hf} & p_{hh} & p_{hd}
+\end{bmatrix} = \begin{bmatrix}
+	0.6 & 0.2 & 0.0 & 0.2 & 0.0 \\
+	0.0 & 0.6 & 0.2 & 0.2 & 0.0 \\
+	0.0 & 0.0 & 0.7 & 0.0 & 0.3 \\
+	0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+	0.0 & 0.0 & 0.0 & 0.7 & 0.3 
+\end{bmatrix} \ , \ R(s) = \begin{bmatrix}
+r_{t} \\
+r_{c} \\
+r_{f} \\
+r_{h} \\
+r_{d} 
+\end{bmatrix} = \begin{bmatrix}
+20 \\
+60 \\
+400 \\
+10 \\
+0 
+\end{bmatrix} $$
+
+\begin{enumerate}
+
+\item(22 pts)\textit{ Fill in the following table with the $V^*$ values for each state in
+the MDP for $t = 1 \dots 5$; (hint: use the value iteration Bellman updates, but
+remove the ``$\max_a$'' part because you don't need to select
+actions).  Suppose} $\gamma = 0.5$. \\
+
+\textbf{Answer}:
+
+\begin{tabular}{|c||c|c|c|c|c|}
+\hline
+{\bf t} & $V_t^*(\text{t})$ & $V_t^*(\text{c})$ & $V_t^*(\text{f})$ & $V_t^*(\text{h})$ & $V_t^*(\text{d})$ \\
+\hline
+$0$     & $0$               & $0$               & $0$               & $0$               & $0$ \\
+\hline
+$1$     & $20$              & $60$              & $400$             & $10$              & $0$ \\
+\hline
+$2$     & $33.0$           & $119.0$            & $540.0$           & $13.5$            & $0.0$ \\
+\hline
+$3$     & $43.2$           & $151.1$            & $589.0$           & $14.7$            & $0.0$ \\
+\hline
+$4$     & $49.5$           & $165.7$            & $606.5$           & $15.2$            & $0.0$ \\
+\hline
+$5$     & $52.9$           & $171.8$            & $612.2$           & $15.3$            & $0.0$ \\
+\hline
+\end{tabular}
+
+For all the $V^{1}_{i}$ initialized values: $V^{1}_{s} = r_{s}$ \\
+For each of the follow-on values: $$ V^{k}_{s} =  r_{s} + \lambda \sum_{j=1}^{n}p_{sj}V_{j}^{k-1} $$
+$$ V_{t}^{1}=20 \ , \ V_{c}^{1}=60 \ , \ V_{f}^{1}=400 \ , \ V_{h}^{1}=10 \ , \ V_{d}^{1}=0 $$
+$$ V_{t}^{2}=20 + 0.5\cdot ( 0.6 \cdot 20+ 0.2 \cdot 60+ 0.0 \cdot 400+ 0.2 \cdot 10+ 0.0 \cdot 0 )=33.0 $$
+$$ V_{c}^{2}=60 + 0.5\cdot ( 0.0 \cdot 20+ 0.6 \cdot 60+ 0.2 \cdot 400+ 0.2 \cdot 10+ 0.0 \cdot 0 )=119.0 $$
+$$ V_{f}^{2}=400 + 0.5\cdot ( 0.0 \cdot 20+ 0.0 \cdot 60+ 0.7 \cdot 400+ 0.0 \cdot 10+ 0.3 \cdot 0 )=540.0 $$
+$$ V_{h}^{2}=10 + 0.5\cdot ( 0.0 \cdot 20+ 0.0 \cdot 60+ 0.0 \cdot 400+ 0.7 \cdot 10+ 0.3 \cdot 0 )=13.5 $$
+$$ V_{d}^{2}=0 + 0.5\cdot ( 0.0 \cdot 20+ 0.0 \cdot 60+ 0.0 \cdot 400+ 0.0 \cdot 10+ 1.0 \cdot 0 )=0.0 $$
+$$ V_{t}^{3}=33.0 + 0.5\cdot ( 0.6 \cdot 33.0+ 0.2 \cdot 119.0+ 0.0 \cdot 540.0+ 0.2 \cdot 13.5+ 0.0 \cdot 0.0 )=43.15 $$
+$$ V_{c}^{3}=119.0 + 0.5\cdot ( 0.0 \cdot 33.0+ 0.6 \cdot 119.0+ 0.2 \cdot 540.0+ 0.2 \cdot 13.5+ 0.0 \cdot 0.0 )=151.05 $$
+$$ V_{f}^{3}=540.0 + 0.5\cdot ( 0.0 \cdot 33.0+ 0.0 \cdot 119.0+ 0.7 \cdot 540.0+ 0.0 \cdot 13.5+ 0.3 \cdot 0.0 )=589.0 $$
+$$ V_{h}^{3}=13.5 + 0.5\cdot ( 0.0 \cdot 33.0+ 0.0 \cdot 119.0+ 0.0 \cdot 540.0+ 0.7 \cdot 13.5+ 0.3 \cdot 0.0 )=14.725 $$
+$$ V_{d}^{3}=0.0 + 0.5\cdot ( 0.0 \cdot 33.0+ 0.0 \cdot 119.0+ 0.0 \cdot 540.0+ 0.0 \cdot 13.5+ 1.0 \cdot 0.0 )=0.0 $$
+$$ V_{t}^{4}=43.15 + 0.5\cdot ( 0.6 \cdot 43.15+ 0.2 \cdot 151.05+ 0.0 \cdot 589.0+ 0.2 \cdot 14.725+ 0.0 \cdot 0.0 )=49.5225 $$
+$$ V_{c}^{4}=151.05 + 0.5\cdot ( 0.0 \cdot 43.15+ 0.6 \cdot 151.05+ 0.2 \cdot 589.0+ 0.2 \cdot 14.725+ 0.0 \cdot 0.0 )=165.6875 $$
+$$ V_{f}^{4}=589.0 + 0.5\cdot ( 0.0 \cdot 43.15+ 0.0 \cdot 151.05+ 0.7 \cdot 589.0+ 0.0 \cdot 14.725+ 0.3 \cdot 0.0 )=606.15 $$
+$$ V_{h}^{4}=14.725 + 0.5\cdot ( 0.0 \cdot 43.15+ 0.0 \cdot 151.05+ 0.0 \cdot 589.0+ 0.7 \cdot 14.725+ 0.3 \cdot 0.0 )=15.15375 $$
+$$ V_{d}^{4}=0.0 + 0.5\cdot ( 0.0 \cdot 43.15+ 0.0 \cdot 151.05+ 0.0 \cdot 589.0+ 0.0 \cdot 14.725+ 1.0 \cdot 0.0 )=0.0 $$
+$$ V_{c}^{5}=165.6875 + 0.5\cdot ( 0.0 \cdot 49.5225+ 0.6 \cdot 165.6875+ 0.2 \cdot 606.15+ 0.2 \cdot 15.15375+ 0.0 \cdot 0.0 )=171.836625 $$
+$$ V_{f}^{5}=606.15 + 0.5\cdot ( 0.0 \cdot 49.5225+ 0.0 \cdot 165.6875+ 0.7 \cdot 606.15+ 0.0 \cdot 15.15375+ 0.3 \cdot 0.0 )=612.1525 $$
+$$ V_{h}^{5}=15.15375 + 0.5\cdot ( 0.0 \cdot 49.5225+ 0.0 \cdot 165.6875+ 0.0 \cdot 606.15+ 0.7 \cdot 15.15375+ 0.3 \cdot 0.0 )=15.3038125 $$
+$$ V_{d}^{5}=0.0 + 0.5\cdot ( 0.0 \cdot 49.5225+ 0.0 \cdot 165.6875+ 0.0 \cdot 606.15+ 0.0 \cdot 15.15375+ 1.0 \cdot 0.0 )=0.0 $$
+
+\item(8 pts) \textit{What was the change in max-norm of $V$ between steps $4$ and $5$?  What does this tell us about how close the final values are to the true values?} \\
+\textbf{Answer}: $ \lVert V(s) \rVert_{5} - \lVert V(s) \rVert_{4} = 612.2 - 606.5 = 5.7 $ , which represents a change of less than 1\%
+in total value.  This tells us that the value for a Full Professor is close to converging.  The changes in the other values are likewise
+small.
+
+\end{enumerate}
+
+\newpage
+
+\section{Clarence the Evil Professor (70pts)}
+
+Alice is also taking another class from Professor Clarence, who is known to be evil among the department
+because he only passes students who sweettalk him.  Classes with Clarence can be modeled with the following MDP:
+
+\includegraphics[width=0.8\textwidth]{mdp.pdf}
+
+In any state, Alice can either take action ``S'' (to try to \emph{Sweettalk} Clarence) or action
+``W'' (to \emph{Work} hard).  Her state is represented by a pair: she can either be smart or dumb, 
+and she can either pass or fail the course. The transitions can be read as follows :
+
+Please answer the following questions with respect to this MDP; \\
+always assume $\gamma = 0.5$:
+
+\textbf{As always please show all your work to make yourself eligible for partial points/credits in case you have the wrong answer}
+
+\begin{enumerate}
+
+\item(16 pts) \textit{Suppose that Alice's policy is to always work.  Compute the value
+of each state under this policy, running $4$ iterations of value
+iterations.  Does this outcome make sense?} \\
+\textbf{Answer}: \\
+$$ T(s,s') = \begin{bmatrix}
+p_{df,df} & p_{df,sf} & p_{df,dp} & p_{df,sp} \\
+p_{sf,df} & p_{sf,sf} & p_{sf,dp} & p_{sf,sp} \\
+p_{dp,df} & p_{dp,sf} & p_{dp,dp} & p_{dp,sp} \\
+p_{sp,df} & p_{sp,sf} & p_{sp,dp} & p_{sp,sp} 
+\end{bmatrix} = \begin{bmatrix}
+0.5 & 0.5 & 0.0 & 0.0 \\
+0.0 & 1.0 & 0.0 & 0.0 \\
+0.5 & 0.5 & 0.0 & 0.0 \\
+0.0 & 1.0 & 0.0 & 0.0
+\end{bmatrix} \ , \ R(s) = \begin{bmatrix}
+r_{df} \\
+r_{sf} \\
+r_{dp} \\
+r_{sp} 
+\end{bmatrix} = \begin{bmatrix}
+0 \\
+0 \\
+10 \\
+10 
+\end{bmatrix}  $$ \\
+\begin{tabular}{|c||c|c|c|c|}
+\hline
+{\bf t} & D+F & S+F & D+P & S+P \\
+\hline
+$0$ & $0$ & $0$ & $0$  & $0$  \\
+\hline
+$1$ & $0$ & $0$ & $10$ & $10$ \\
+\hline
+$2$ & $0$ & $0$ & $10$ & $10$ \\
+\hline
+$3$ & $0$ & $0$ & $10$ & $10$ \\
+\hline
+$4$ & $0$ & $0$ & $10$ & $10$ \\
+\hline
+\end{tabular} \\
+This outcome makes sense because working never gets Alice out of the failing states. Working never increases her utility, so her estimate
+of a state's value is only the value of the state itself.  A Work-only policy will always tend towards the `S+F' state.\\
+$$ V_{df}^{1}=0 \ , \ V_{sf}^{1}=0 \ , \ V_{dp}^{1}=10 \ , \ V_{sp}^{1}=10 $$
+$$ V_{df}^{2}=0 + 0.5\cdot ( 0.5 \cdot 0+ 0.5 \cdot 0+ 0.0 \cdot 10+ 0.0 \cdot 10 )=0.0 $$
+$$ V_{sf}^{2}=0 + 0.5\cdot ( 0.0 \cdot 0+ 1.0 \cdot 0+ 0.0 \cdot 10+ 0.0 \cdot 10 )=0.0 $$
+$$ V_{dp}^{2}=10 + 0.5\cdot ( 0.5 \cdot 0+ 0.5 \cdot 0+ 0.0 \cdot 10+ 0.0 \cdot 10 )=10.0 $$
+$$ V_{sp}^{2}=10 + 0.5\cdot ( 0.0 \cdot 0+ 1.0 \cdot 0+ 0.0 \cdot 10+ 0.0 \cdot 10 )=10.0 \ , \ etc. $$
+
+\item(16 pts) \textit{Suppose that Alice's policy is to work only when she's dumb and sweettalk when she's smart.
+Compute the values here for four steps. } \\
+\textbf{Answer}:
+$$ T(s,s') = \begin{bmatrix}
+p_{df,df} & p_{df,sf} & p_{df,dp} & p_{df,sp} \\
+p_{sf,df} & p_{sf,sf} & p_{sf,dp} & p_{sf,sp} \\
+p_{dp,df} & p_{dp,sf} & p_{dp,dp} & p_{dp,sp} \\
+p_{sp,df} & p_{sp,sf} & p_{sp,dp} & p_{sp,sp} 
+\end{bmatrix} = \begin{bmatrix}
+0.5 & 0.5 & 0.0 & 0.0 \\
+0.5 & 0.0 & 0.0 & 0.5 \\
+0.5 & 0.5 & 0.0 & 0.0 \\
+0.0 & 0.0 & 0.5 & 0.5
+\end{bmatrix} \ , \ R(s) = \begin{bmatrix}
+r_{df} \\
+r_{sf} \\
+r_{dp} \\
+r_{sp} 
+\end{bmatrix} = \begin{bmatrix}
+0 \\
+0 \\
+10 \\
+10 
+\end{bmatrix}  $$ \\
+
+\begin{tabular}{|c||c|c|c|c|}
+\hline
+{\bf t} & D+F & S+F & D+P & S+P \\
+\hline
+$0$ & $0$ & $0$ & $0$  & $0$  \\
+\hline
+$1$ & $0.0$ & $0.0$ & $10.0$ & $10.0$ \\
+\hline
+$2$ & $0.0$ & $2.5$ & $10.0$ & $15.0$ \\
+\hline
+$3$ & $0.6$ & $3.8$ & $10.6$ & $16.3$ \\
+\hline
+$4$ & $1.1$ & $4.2$ & $11.1$ & $16.7$ \\
+\hline
+\end{tabular}\\
+$$ V_{df}^{1}=0 \ , \ V_{sf}^{1}=0 \ , \ V_{dp}^{1}=10 \ , \ V_{sp}^{1}=10 $$
+$$ V_{df}^{2}=0 + 0.5\cdot ( 0.5 \cdot 0+ 0.5 \cdot 0+ 0.0 \cdot 10+ 0.0 \cdot 10 )=0.0 $$
+$$ V_{sf}^{2}=0 + 0.5\cdot ( 0.5 \cdot 0+ 0.0 \cdot 0+ 0.0 \cdot 10+ 0.5 \cdot 10 )=2.5 $$
+$$ V_{dp}^{2}=10 + 0.5\cdot ( 0.5 \cdot 0+ 0.5 \cdot 0+ 0.0 \cdot 10+ 0.0 \cdot 10 )=10.0 $$
+$$ V_{sp}^{2}=10 + 0.5\cdot ( 0.0 \cdot 0+ 0.0 \cdot 0+ 0.5 \cdot 10+ 0.5 \cdot 10 )=15.0 $$
+$$ V_{df}^{3}=0.0 + 0.5\cdot ( 0.5 \cdot 0.0+ 0.5 \cdot 2.5+ 0.0 \cdot 10.0+ 0.0 \cdot 15.0 )=0.625 $$
+$$ V_{sf}^{3}=2.5 + 0.5\cdot ( 0.5 \cdot 0.0+ 0.0 \cdot 2.5+ 0.0 \cdot 10.0+ 0.5 \cdot 15.0 )=3.75 $$
+$$ V_{dp}^{3}=10.0 + 0.5\cdot ( 0.5 \cdot 0.0+ 0.5 \cdot 2.5+ 0.0 \cdot 10.0+ 0.0 \cdot 15.0 )=10.625 $$
+$$ V_{sp}^{3}=15.0 + 0.5\cdot ( 0.0 \cdot 0.0+ 0.0 \cdot 2.5+ 0.5 \cdot 10.0+ 0.5 \cdot 15.0 )=16.25 $$
+$$ V_{df}^{4}=0.625 + 0.5\cdot ( 0.5 \cdot 0.625+ 0.5 \cdot 3.75+ 0.0 \cdot 10.625+ 0.0 \cdot 16.25 )=1.09375 $$
+$$ V_{sf}^{4}=3.75 + 0.5\cdot ( 0.5 \cdot 0.625+ 0.0 \cdot 3.75+ 0.0 \cdot 10.625+ 0.5 \cdot 16.25 )=4.21875 $$
+$$ V_{dp}^{4}=10.625 + 0.5\cdot ( 0.5 \cdot 0.625+ 0.5 \cdot 3.75+ 0.0 \cdot 10.625+ 0.0 \cdot 16.25 )=11.09375 $$
+$$ V_{sp}^{4}=16.25 + 0.5\cdot ( 0.0 \cdot 0.625+ 0.0 \cdot 3.75+ 0.5 \cdot 10.625+ 0.5 \cdot 16.25 )=16.71875 $$
+
+\item(24 pts) \textit{Just run plain value iteration.  Show the $V$ values derived through value iteration for the first four time steps; 
+fill in the table below:} \\
+\textbf{Answer}: This is similar to value iteration on a certain policy, except that we store the maximum expected reward out of all
+choices as the value of the state, and iterate from there.
+$$ T_{W}(s,s') = \begin{bmatrix}
+p_{df,df} & p_{df,sf} & p_{df,dp} & p_{df,sp} \\
+p_{sf,df} & p_{sf,sf} & p_{sf,dp} & p_{sf,sp} \\
+p_{dp,df} & p_{dp,sf} & p_{dp,dp} & p_{dp,sp} \\
+p_{sp,df} & p_{sp,sf} & p_{sp,dp} & p_{sp,sp} 
+\end{bmatrix} = \begin{bmatrix}
+0.5 & 0.5 & 0.0 & 0.0 \\
+0.0 & 1.0 & 0.0 & 0.0 \\
+0.5 & 0.5 & 0.0 & 0.0 \\
+0.0 & 1.0 & 0.0 & 0.0
+\end{bmatrix} $$\\
+$$T_{S}(s,s') = \begin{bmatrix}
+	p_{df,df} & p_{df,sf} & p_{df,dp} & p_{df,sp} \\
+	p_{sf,df} & p_{sf,sf} & p_{sf,dp} & p_{sf,sp} \\
+	p_{dp,df} & p_{dp,sf} & p_{dp,dp} & p_{dp,sp} \\
+	p_{sp,df} & p_{sp,sf} & p_{sp,dp} & p_{sp,sp} 
+\end{bmatrix} = \begin{bmatrix}
+1.0 & 0.0 & 0.0 & 0.0 \\
+0.5 & 0.0 & 0.0 & 0.5 \\
+0.5 & 0.0 & 0.5 & 0.0 \\
+0.0 & 0.0 & 0.5 & 0.5
+\end{bmatrix} $$\\
+$$ R(s) = \begin{bmatrix}
+r_{df} \\
+r_{sf} \\
+r_{dp} \\
+r_{sp} 
+\end{bmatrix} = \begin{bmatrix}
+0 \\
+0 \\
+10 \\
+10 
+\end{bmatrix}  $$
+
+\begin{tabular}{|c||c|c|c|c|}
+\hline
+{\bf t} & D+F & S+F & D+P & S+P \\
+\hline
+$0$ & $0$ & $0$ & $0$  & $0$  \\
+\hline
+$1$ & $0$ , Equal & $0$ , Equal  & $10$ , Equal  & $10$ , Equal  \\
+\hline
+$2$ & $0$ , Equal & $2.5$ , Sweet & $12.5$ , Sweet & $15.0$ , Sweet \\
+\hline
+$3$ & $0.6$ , Work & $3.8$ , Sweet & $13.1$ , Sweet & $16.9$ , Sweet \\
+\hline
+$4$ & $1.1$ , Work & $4.4$ , Sweet & $13.4$ , Sweet & $17.5$ , Sweet \\
+\hline
+\end{tabular}\\
+
+\includegraphics{planChoices.pdf}  
+
+\item(4 pts) \textit{What is the optimal policy and what action should she take in each of her states?} \\
+\textbf{Answer}: The optimal policy after 4 iterations is for Alice to Sweettalk in all states except `D+F'. In `D+F', the
+only way to escape failure is to Work.  After working she is still either `D+F' or she becomes smart and has a chance to 
+succeed at Sweettalk.
+
+
+\item(10 pts) Let's do policy iteration!  Suppose that Alice
+begins with the policy from question (1): always work.  You've already
+computed values under this policy.  Use that to estimate a new policy.
+Write that policy down.  Compute four iterations of values for that
+new policy. Now compute four iterations of values for the third policy.  Has the policy converged?
+Does it seem (intuitively) optimal?
+
+\end{enumerate}
+
+\end{document}
