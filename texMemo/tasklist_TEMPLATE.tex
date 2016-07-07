@@ -1,0 +1,115 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Memo
+% LaTeX Template
+% Version 1.0 (30/12/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Rob Oakes (http://www.oak-tree.us) with modifications by:
+% Vel (vel@latextemplates.com)
+%https://www.overleaf.com/5571316gnpzgs#
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+% Modified By: James Watson
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[letterpaper,11pt]{texMemo} % Set the paper size (letterpaper, a4paper, etc) and font size (10pt, 11pt or 12pt)
+
+\usepackage{parskip} % Adds spacing between paragraphs
+\setlength{\parindent}{15pt} % Indent paragraphs
+
+\usepackage{wasysym}
+
+%----------------------------------------------------------------------------------------
+%	MEMO INFORMATION
+%----------------------------------------------------------------------------------------
+
+%\memoto{James Smith} % Recipient(s)
+
+\memosubject{Tentative Milestone Schedule for Regrasp Project} % Memo subject
+
+\memoauthor{James Watson} % Sender(s)
+
+%\memodate{Monday, December 30, 2013} % Date, set to \today for automatically printing todays date
+\memodate{ \today }
+
+%\logo{\includegraphics[width=0.3\textwidth]{logo.png}} % Institution logo at the top right of the memo, comment out this line for no logo
+
+% URL, Format a counter with leading zeros: http://tex.stackexchange.com/a/30940
+\usepackage{fmtcount}% http://ctan.org/pkg/fmtcount
+\usepackage{intcalc}
+
+\newcounter{lrgNum}
+\setcounter{lrgNum}{100}
+\newcounter{medNum}
+\setcounter{medNum}{10}
+\newcounter{smlNum}
+\setcounter{smlNum}{1}
+
+\newcommand{\dispTask}[1]{ % display the counter value as a decimal with leading zeros padded to 4 digits
+  \padzeroes[4]{\decimal{#1}} 
+}
+
+\newcommand{\lrgIncr}[1]{ % Increment to the next main task
+	\setcounter{#1}{ \intcalcMul{ \intcalcDiv{\value{#1}}{\value{lrgNum}} }{ \value{lrgNum} } }
+	\addtocounter{#1}{\value{lrgNum}}
+	\dispTask{#1}
+}
+
+\newcommand{\medIncr}[1]{ % Increment to the next 2nd-level task
+	\setcounter{#1}{ \intcalcMul{ \intcalcDiv{\value{#1}}{\value{medNum}} }{ \value{medNum} } }
+	\addtocounter{#1}{\value{medNum}}
+	\dispTask{#1}
+}
+
+\newcommand{\smlIncr}[1]{ % Increment to the next 3rd-level task
+	\addtocounter{#1}{1}
+	\dispTask{#1}
+}
+
+\newcounter{taskCtr}
+\setcounter{taskCtr}{0}
+
+%URL, enumerate with custom levels: http://tex.stackexchange.com/a/201936
+\usepackage{enumitem}
+% Define a task list that gives each item its own 4-digit code
+\newlist{taskList}{itemize}{3}% allow 3 levels of nesting in an enumerate-like environment
+\setlist[taskList,1]{label=\lrgIncr{taskCtr}}% labels for top level
+\setlist[taskList,2]{label=\medIncr{taskCtr}}% labels for top level
+\setlist[taskList,3]{label=\smlIncr{taskCtr}}% labels for top level
+
+\usepackage{relsize} % Define font sizes as multiples or fractions of the normal document font
+%                      Used by \heavy
+
+\newcommand{\BU}[1]{\underline{\textbf{#1}}} % \BU - bold and underline
+\newcommand{\heavy}[1]{ {\relscale{1.5} \BU{#1}} }
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle{Regrasp Planning Schedule} % Print the memo header information
+
+%----------------------------------------------------------------------------------------
+%	MEMO CONTENT
+%----------------------------------------------------------------------------------------
+
+\begin{taskList} % Main list begin
+	\item $\mid$ YYYY-MM-DD $\mid$
+\end{taskList} % Main list end
+
+
+$\ $ \\ % force an "empty" line
+
+\heavy{Notes}
+\begin{itemize}
+	\item 
+\end{itemize}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
