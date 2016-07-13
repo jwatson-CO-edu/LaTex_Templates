@@ -17,8 +17,16 @@
 
 \documentclass[letterpaper,11pt]{texMemo} % Set the paper size (letterpaper, a4paper, etc) and font size (10pt, 11pt or 12pt)
 
+% ~~ Import Packages ~~
 \usepackage{parskip} % Adds spacing between paragraphs
-\setlength{\parindent}{15pt} % Indent paragraphs
+	\setlength{\parindent}{15pt} % Indent paragraphs
+\usepackage[at]{easylist} % '\NewList' to restart numbering
+\usepackage{bbding} % \FiveStar
+\usepackage{wasysym} % Symbols for Checklist: \CheckedBox \Square \XBox
+\usepackage{hyperref} % \url{URL} to escape a URL
+% ~~ Define Commands ~~
+\newcommand{\prn}[1]{\left( #1 \right)} % Shortcut for resizable math parens
+\newcommand{\mbf}[1]{\mathbf{#1}} % Shortcut for math bold
 
 %----------------------------------------------------------------------------------------
 %	MEMO INFORMATION
