@@ -1,3 +1,7 @@
 *.pdf
 *.gz
 *.aux
+texMemo/texMemo_TEMPLATE.out
+texMemo/tasklist_TEMPLATE.log
+texMemo/texMemo_TEMPLATE.log
+texMemo/texput.log
