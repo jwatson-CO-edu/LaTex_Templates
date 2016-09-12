@@ -6,6 +6,8 @@
 %    - One letter per column
 %    - Each letter {l,c,r} represents left, center, right alignment
 %    - Pipes | between columns will draw a vertical line between those columns
+%    - \hline at the end of a line draws a horizontal line under that column
+%    - \cline{N-M} is similar to \hline but only spans some of the columns
 
 % Define a new macro to put bottom padding for cell, use '\B'
 \newcommand\B{\rule[-2ex]{0pt}{0pt}} 

@@ -1,12 +1,34 @@
-% == HW Repair == 
+% ==== HW Repair ====
 % Version 2016-09-09
 \usepackage{epstopdf}
 \usepackage{verbatim} % Block Comment: \begin{comment} ... \end{comment}
 % \usepackage{minted} % code listings % URL, Settings to use this package: http://tex.stackexchange.com/a/99476
-% \usepackage{listings} % code listings
 \usepackage[margin=0.5in]{geometry} % Override enormous margins! 
 \usepackage[all, cmtip]{xy} % Graphs!
 \newcommand{\crcchr}[1]{{\Large \textcircled{\normalsize #1}}} % Circle a characher for diagrams/graphs
 \newcommand{\crcmth}[1]{{\LARGE \textcircled{\normalsize #1}}} % Circle large enough for a negated character
 \usepackage{framed} % frame a lot of stuff, URL: http://tex.stackexchange.com/a/163376
-% == End Repair ==
+
+% == Python Environment == 
+% \begin{lstlisting}[language=python] 
+% \end{lstlisting}
+\usepackage{listings} % source code formatting, URL: https://www.overleaf.com/4950285xjfphj#/15273478/
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0} % colors to be used for highlighting
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+	tabsize=2,
+	backgroundcolor=\color{white},% ---- choose the background color
+	basicstyle=\footnotesize\ttfamily, % size of fonts used for the code
+	breaklines=true, % ----------------- automatic line breaking only at whitespace
+	captionpos=b, % -------------------- sets the caption-position to bottom
+	commentstyle=\color{mygreen}, % ---- comment style
+	escapeinside={\%*}{*)}, % ---------- if you want to add LaTeX within your code
+	keywordstyle=\color{blue}, % ------- keyword style
+	stringstyle=\color{mymauve}, % ----- string literal style
+}
+% == End Python ==
+% ==== End Repair ====
