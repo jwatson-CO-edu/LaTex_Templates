@@ -1,13 +1,21 @@
 % ==== HW Repair ====
-% Version 2016-09-09
+% Version 2016-09-12
+
+% == Imports ==
 \usepackage{epstopdf}
 \usepackage{verbatim} % Block Comment: \begin{comment} ... \end{comment}
 % \usepackage{minted} % code listings % URL, Settings to use this package: http://tex.stackexchange.com/a/99476
 \usepackage[margin=0.5in]{geometry} % Override enormous margins! 
 \usepackage[all, cmtip]{xy} % Graphs!
+\usepackage{framed} % frame a lot of stuff, URL: http://tex.stackexchange.com/a/163376
+% == End Imports ==
+
+% == New Commands ==
 \newcommand{\crcchr}[1]{{\Large \textcircled{\normalsize #1}}} % Circle a characher for diagrams/graphs
 \newcommand{\crcmth}[1]{{\LARGE \textcircled{\normalsize #1}}} % Circle large enough for a negated character
-\usepackage{framed} % frame a lot of stuff, URL: http://tex.stackexchange.com/a/163376
+\newcommand{\dspst}{\displaystyle} % Shortcut for \displaystyle
+% == End Commands ==
+
 
 % == Python Environment == 
 % \begin{lstlisting}[language=python] 
