@@ -1,10 +1,11 @@
 \usepackage[all, cmtip]{xy} %TODO: SEND TO TOP % Graphs! 
+\usepackage{wasysym} %TODO: Load the package 'wasysym' after the 'ams'packages , URL: http://tex.stackexchange.com/a/183364/115244 % $ \RIGHTarrow $
 
 % ==== HW Repair ====
-% Version 2016-09-12
+% Version 2016-12-09
 
 % == Imports ==
-\usepackage{epstopdf}
+\usepackage{epstopdf} % Process EPS from matplotlib --> PDF
 \usepackage{verbatim} % Block Comment: \begin{comment} ... \end{comment}
 % \usepackage{minted} % code listings % URL, Settings to use this package: http://tex.stackexchange.com/a/99476
 \usepackage[margin=0.5in]{geometry} %TODO: DISABLE OTHER MARGIN COMMANDS % Override enormous margins! 
@@ -15,6 +16,13 @@
 \newcommand{\crcchr}[1]{{\Large \textcircled{\normalsize #1}}} % Circle a characher for diagrams/graphs
 \newcommand{\crcmth}[1]{{\LARGE \textcircled{\normalsize #1}}} % Circle large enough for a negated character
 \newcommand{\dspst}{\displaystyle} % Shortcut for \displaystyle
+\newcommand{\BU}[1]{\underline{\textbf{#1}}} % \BU - bold and underline
+\newcommand{\lfb}{\left[}  
+\newcommand{\rtb}{\right]}
+\newcommand{\lfp}{\left(}  
+\newcommand{\rtp}{\right)}
+\newcommand{\rarw}{$\rightarrow$\ }
+\newcommand{\larw}{$\leftarrow$\ }
 % == End Commands ==
 
 
@@ -23,6 +31,7 @@
 % \end{lstlisting}
 \usepackage{listings} % source code formatting, URL: https://www.overleaf.com/4950285xjfphj#/15273478/
 \usepackage{color}
+\usepackage{graphicx} % Include a picture: \includegraphics[scale=0.45]{fileNameWithoutEXT}
 
 \definecolor{mygreen}{rgb}{0,0.6,0} % colors to be used for highlighting
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}

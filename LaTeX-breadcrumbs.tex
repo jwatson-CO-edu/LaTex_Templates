@@ -72,3 +72,28 @@ $\Square$ , $\CheckedBox$ , $\XBox$
 \begin{minipage}[t]{0.27\textwidth}
   % Put stuff in its own little environment, like a column
 \end{minipage}
+
+% Print a number with comma thousands separators but without an annoying space
+$32,\!154,\!192$
+
+Spaces in mathematical mode.
+% Spaces are arranges smallest to largest
+$$ 
+\begin{align*}
+f(x) =& x^2\! +3x\! +2 \\ % Negative space, consumes a tiny pit of space in front of it
+f(x) =& x^2+3x+2 \\       % No space or automatic space for context-sensitive spacing
+f(x) =& x^2\, +3x\, +2 \\ % Tiny space
+f(x) =& x^2\: +3x\: +2 \\
+f(x) =& x^2\; +3x\; +2 \\
+f(x) =& x^2\ +3x\ +2 \\   % em space
+f(x) =& x^2\quad +3x\quad +2 \\ % big space
+f(x) =& x^2\qquad +3x\qquad +2  % gigantic space
+\end{align*}
+$$
+
+% Aslign plain text
+Here is some text before by aligned text\par
+\makebox[1.5cm]{S}  Isomeric state\par
+\makebox[1.5cm]{Z}  Atomic number\par
+\makebox[1.5cm]{A}  Atomic mass number\par
+Some text after the aligned text
