@@ -24,6 +24,7 @@
 \usepackage{listings}
 \usepackage{ifthen}
 \usepackage{ragged2e}
+\usepackage{float} % Force figure placement [H] , Sometimes ugly!
 \RaggedRight
 
 % ==== HW Repair ====
@@ -36,14 +37,17 @@
 \usepackage[margin=0.5in]{geometry} % Override enormous margins! 
 \usepackage{framed} % frame a lot of stuff, URL: http://tex.stackexchange.com/a/163376
 \usepackage{tkz-graph} % For drawing graphs
-\usepackage{tikz}
+\usepackage{tikz} % Drawing other stuff
 \usetikzlibrary{arrows}
 \usetikzlibrary{calc}
 \usepackage{amsmath}
 \usepackage{wasysym} %Load the package 'wasysym' after the 'ams'packages , URL: http://tex.stackexchange.com/a/183364/115244 % $ \RIGHTarrow $
+\usepackage{xfrac} % Slanted fractions
+\usepackage{pbox}
 % == End Imports ==
 
-% == New Commands ==
+% == New Commands ==========================================================================================
+
 \newcommand{\crcchr}[1]{{\Large \textcircled{\normalsize #1}}} % Circle a characher for diagrams/graphs
 \newcommand{\crcmth}[1]{{\LARGE \textcircled{\normalsize #1}}} % Circle large enough for a negated character
 \newcommand{\dspst}{\displaystyle} % Shortcut for \displaystyle
@@ -56,13 +60,15 @@
 \newcommand{\larw}{$\leftarrow$\ }
 \newcommand{\mbf}[1]{\mathbf{#1}}
 \newcommand{\ans}{\textbf{Answer}:\ }
-% == End Commands ==
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\ds}{\displaystyle}
 
-% == Commands Definitions ==
 % ~ Bold Vectors & Matrices ~
 \def\vphi{\hbox{\boldmath$\phi$}}
 \def\veta{\hbox{\boldmath$\eta$}}
 \def\vpsi{\hbox{\boldmath$\psi$}}
+\def\vtheta{\hbox{\boldmath$\theta$}}
+\def\va{\hbox{\boldmath$a$}}
 \def\vA{\hbox{\boldmath$A$}}
 \def\vb{\hbox{\boldmath$b$}}
 \def\vc{\hbox{\boldmath$c$}}
@@ -73,21 +79,20 @@
 \def\vg{\hbox{\boldmath$g$}}
 \def\vI{\hbox{\boldmath$I$}}
 \def\vJ{\hbox{\boldmath$J$}}
-\def\vK{\hbox{\boldmath$K$}}
+\def\vk{\hbox{\boldmath$k$}}
 \def\vl{\hbox{\boldmath$l$}}
 \def\vL{\hbox{\boldmath$L$}}
 \def\vn{\hbox{\boldmath$n$}}
+\def\vN{\hbox{\boldmath$N$}}
 \def\vp{\hbox{\boldmath$p$}}
 \def\vq{\hbox{\boldmath$q$}}
 \def\vr{\hbox{\boldmath$r$}}
 \def\vR{\hbox{\boldmath$R$}}
 \def\vS{\hbox{\boldmath$S$}}
 \def\vt{\hbox{\boldmath$t$}}
-\def\vtau{\hbox{\boldmath$\tau$}}
+\def\vT{\hbox{\boldmath$T$}}
 \def\vv{\hbox{\boldmath$v$}}
 \def\vV{\hbox{\boldmath$V$}}
-\def\vw{\hbox{\boldmath$w$}}
-\def\vW{\hbox{\boldmath$W$}}
 \def\vx{\hbox{\boldmath$x$}}
 \def\vy{\hbox{\boldmath$y$}}
 \def\vz{\hbox{\boldmath$z$}}
@@ -98,20 +103,9 @@
 \def\Rot{\hbox{\boldmath$R$}}
 \def\Trans{\hbox{\boldmath$T$}}
 \def\vzero{\hbox{\boldmath$0$}}
-% ~ Tabular Formatting ~
-\def\topCellPad{\rule{0pt}{2.6ex}}
-% ~ Left Scripts ~
-\newcommand\lsup[1]{\!^{#1}\!}
-% ~ Special Functions ~
-\DeclareMathOperator{\atan}{atan}
-\DeclareMathOperator{\atan2}{atan2}
-\DeclareMathOperator{\acos}{acos}
-\DeclareMathOperator{\sign}{sign}
-\DeclareMathOperator{\dor}{dor}
-\DeclareMathOperator{\median}{median}
-% ~ Special Notations ~
-\newcommand{\norm}[1]{\left\lVert#1\right\rVert} % URL , Norm: https://tex.stackexchange.com/a/107190
-% __ End Definitions __
+
+% __ End Commands __________________________________________________________________________________________
+
 
 % == Python Environment == 
 % \begin{lstlisting}[language=python] 
