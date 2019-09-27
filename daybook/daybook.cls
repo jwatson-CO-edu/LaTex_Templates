@@ -2,6 +2,7 @@
 % daybook.cls
 % James Watson , 2017 June
 % Class for notes and journal
+% VERSION: 2017-06-16
 %%%%%
 
 % ==== Init ================================================================================================================================
@@ -11,7 +12,7 @@
 \ProvidesClass{daybook}%[2017-06-04 , Class for notes and journal]
 % \LoadClass[twoside]{report}
 \RequirePackage{palatino}
-\LoadClass[letterpaper,twoside,onecolumn,final,openany,14pt]{extreport}
+\LoadClass[letterpaper,twoside,onecolumn,final,openany,12pt]{extreport}
 % \LoadClassWithOptions[12pt]{report}
 % == End Setup ==
 
@@ -42,6 +43,7 @@
 % = End Font =
 
 % = Symbol Commands =
+\usepackage{mathabx} % Needed symbols
 \newcommand{\dmd}{$\blackdiamond$\ }
 \newcommand{\rarw}{$\rightarrow$\ }
 \newcommand{\larw}{$\leftarrow$\ }
