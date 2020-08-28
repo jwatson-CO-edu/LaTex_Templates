@@ -1,0 +1,76 @@
+\documentclass{letter}
+
+\usepackage{boulder-ltr}
+\usepackage{graphicx}
+
+% Modify signature as necessary.
+\signature{Sean O'Rourke \\ University of Colorado at Boulder}
+
+\begin{document}
+
+\begin{letter}
+{Prospective user\\
+Department of Mathematics\\
+University of Colorado at Boulder
+}
+
+\date{\today}
+
+\opening{Dear prospective user,}
+
+Here is an implementation of the CU Boulder letterhead for \LaTeX.  This implementation is completely ``unofficial'' and may not match official university letterhead.  
+
+The rest of this letter describes how to use the {\verb+boulder-ltr+} package.  
+
+{\bf How do I use it?}
+\begin{enumerate}
+
+\item Use the ``letter'' document class.  You should declare your signature and other personal information in the preamble.  
+
+\item Optionally decide on a logo.  The default is color, but you can use the {\verb+bw-logo+} option for the black-and-white logo.  There is an option ({\verb+no-logo+}) to remove the logo completely.  You may also use your own file.  To do so, you will need to redefine {\verb+\CULogo[BW]file+} in boulder-ltr.sty.
+
+\item Need a different department? You will need to edit {\verb+\fulladdress+} and {\verb+\fulltelephone+} in boulder-ltr.sty.  
+
+\item Optionally provide your signature as a pdf or jpeg file.
+
+\end{enumerate}
+
+{\bf Make it easier for me.}
+
+Copy readme.tex to myletter.tex, modify as needed, and run pdflatex on it.
+
+{\bf Options}
+
+The {\verb+boulder-ltr+} package provides the following options.
+\begin{itemize}
+	\item {\verb+color-logo+} (default) Uses the CU Boulder color logo.
+	\item {\verb+bw-logo+} Uses a black-and-white version of the CU Boulder logo.
+	\item {\verb+no-logo+} Does not display any logo.
+	\item {\verb+britdate+} Uses dd-mm-yyyy date format.
+\end{itemize} 
+
+{\bf Version history}
+
+Version 0.1 is the initial version of {\verb+boulder-ltr+}.  Version 0.1 was made available on December 2, 2014.  
+
+{\bf Comments, suggestions, and improvements}
+
+The original distribution of boulder-ltr is at:\\
+{\verb+http://math.colorado.edu/~seor3821/software/boulder-letterhead/+} 
+
+Your comments, suggestions, and patches for the style file are especially welcome. 
+
+%\closing{Sincerely,}
+
+\bigskip
+
+Good luck!
+
+\includegraphics[width=8cm]{signature}
+
+Sean O'Rourke \\
+University of Colorado at Boulder 
+
+
+\end{letter}
+\end{document}

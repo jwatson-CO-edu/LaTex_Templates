@@ -1,3 +1,13 @@
+\begin{filecontents}{HWbib.bib}
+@book{simon2006optimal,
+  title={Optimal state estimation: Kalman, H infinity, and nonlinear approaches},
+  author={Simon, Dan},
+  year={2006},
+  publisher={John Wiley \& Sons}
+}
+\end{filecontents}
+
+
 \documentclass{hw_grad}
 
 % === RECIPES =============================================================================================================================
@@ -32,7 +42,7 @@
 
 \title{HW\#\#: ASSIGNMENT TITLE}
 \duedate{Due: YYYY-MM-DD}
-\class{CSCI-5302: Advanced Robotics, 2019 Spring}
+\class{ASEN-5044: Advanced Robotics, 2019 Fall}
 \institute{University of Colorado Boulder}
 \author{James Watson, 105754866}
 
@@ -40,25 +50,8 @@
 	\maketitle
 	
 	
-	\begin{thebibliography}{1}
-		
-		\bibitem{label1} Kuffner, James J., and Steven M. LaValle. ``RRT-connect: An efficient approach to single-query path planning.'' In Robotics and Automation, 2000. Proceedings. ICRA'00. IEEE International Conference on, vol. 2, pp. 995-1001. IEEE, 2000.
-		
-%		\bibitem{Erdos01} P. Erd\H os, \emph{A selection of problems and
-%			results in combinatorics}, Recent trends in combinatorics (Matrahaza,
-%		1995), Cambridge Univ. Press, Cambridge, 2001, pp. 1--6.
-
-%		\bibitem{ConcreteMath}
-%		R.L. Graham, D.E. Knuth, and O. Patashnik, \emph{Concrete
-%			mathematics}, Addison-Wesley, Reading, MA, 1989.
-
-%		\bibitem{Knuth92} D.E. Knuth, \emph{Two notes on notation}, Amer.
-%		Math. Monthly \textbf{99} (1992), 403--422.
-
-%		\bibitem{Simpson} H. Simpson, \emph{Proof of the Riemann
-%			Hypothesis},  preprint (2003), available at 
-%		\url{http://www.math.drofnats.edu/riemann.ps}.
-		
-	\end{thebibliography}
+	
+	\bibliographystyle{plain}
+    \bibliography{HWbib}
 	
 \end{document}

@@ -1,0 +1,111 @@
+%% boulder-ltr.sty - CU Boulder letterhead style
+%% Version 0.1
+%% Sean O'Rourke
+%% http://math.colorado.edu/~seor3821/software/boulder-letterhead/
+%% LaTeX adapted from Cornell's cornell-ltr.sty 
+%  
+% Class options:
+% color-logo: print the logo in color [Default]
+% bw-logo: print the logo in black and white, not color
+% no-logo: include no logo, e.g. for printing on letterhead paper?
+% britdate: use dd-mm-yyyy date format.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{boulder-ltr}
+\typeout{** CU Boulder Letter Document Style, Version 0.1}
+\typeout{** This is an unofficial implementation of the university's letterhead}
+
+\RequirePackage{graphicx}
+
+\def\CULogofile{CUBoulder}
+\def\CULogoBWfile{CUBoulder_blk}
+\newlength{\defaultmargin}
+\setlength{\defaultmargin}{1.1in}   
+
+\RequirePackage[margin=\defaultmargin,top=0.7in,nohead]{geometry}
+
+% Use appropriate logo.
+\def\culogo{\includegraphics[height=0.475in]{\CULogofile}}
+
+\DeclareOption{color-logo}{
+  \def\culogo{\includegraphics[height=0.475in]{\CULogofile}}
+  \typeout{Using logo file \CULogofile}
+}
+\DeclareOption{bw-logo}{
+  \def\culogo{\includegraphics[height=0.475in]{\CULogoBWfile}}
+  \typeout{Using logo file \CULogoBWfile}
+}
+\DeclareOption{no-logo}{
+  \def\culogo{\parbox[t]{5in}{\hspace*{4in}}\vspace*{0.4in}}
+  \typeout{Blank logo requested. Hope you had other plans.}
+}
+
+\DeclareOption{britdate}{\renewcommand*{\today}{\number\day\space
+   \ifcase\month\or
+   January\or February\or March\or April\or May\or June\or
+   July\or August\or September\or October\or November\or December\fi
+   \space\number\year}}
+
+\ProcessOptions
+
+
+% Define address.
+\def\fulladdress{
+    Department of Mathematics \\
+    395 UCB \\
+    Boulder, Colorado 80309-0395 
+}
+
+% Define telephone and fax numbers.
+\def\fulltelephone{
+	t 303 492 3613 \\
+	f 303 492 7707 
+}
+
+% Address and telephone numbers go on the right.
+\def\completeaddress{
+	\hspace*{3.75in}
+	\parbox{\indentedwidth}{{\fontsize{9}{12}\selectfont \raggedright \fulladdress}}
+	\hspace*{-0.5in}
+	\parbox{\indentedwidth}{{\fontsize{9}{12}\selectfont \raggedright \fulltelephone}}
+}
+
+
+% Set first page opening.
+\renewcommand{\opening}[1]
+{
+	\thispagestyle{firstpage}
+	% Lay out the header
+	\vspace*{-0.5in}
+	\hspace{-0.5in}\culogo\par
+	\vspace{-0.5in}
+ 	\completeaddress\par
+ 	\vspace{2\parskip}
+	% Set the text font
+	\vspace{2\parskip}
+	\fontfamily{ptm}\fontsize{12}{14}\selectfont
+	\hfill\mbox{\@date}\\
+	\vspace{2\parskip}\\
+	{\raggedright \toname \ \\ \toaddress \par}
+	\vspace{1.5\parskip}
+	#1\par\nobreak
+}
+% And the rest of the letter follows.
+
+% Set up signature at the end
+\renewcommand{\closing}[1]
+{
+	\par\nobreak\vspace{2\parskip}
+	\stopbreaks
+	\noindent
+	\parbox{\indentedwidth}
+	{\raggedright
+	\ignorespaces #1\\[6\medskipamount]
+	\ifx\@empty\fromsig
+		\fromname\\\mypos
+	\else \fromsig \fi
+	\strut}
+	\par
+}
+
+%%%% End of style file. %%%%
