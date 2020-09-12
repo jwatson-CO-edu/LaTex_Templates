@@ -11,13 +11,21 @@
 %% ~~~ Document Type ~~~
 \documentclass[12pt]{article}
 
+
+
+
 %% ~~~ Imports ~~~
+\usepackage[all, cmtip]{xy} % Should be first import
 \usepackage[utf8]{inputenc}
-\usepackage{wasysym} %TODO: Load the package 'wasysym' after the 'ams' packages 
+\usepackage{epstopdf} % Process EPS from matplotlib --> PDF
+\usepackage{verbatim} % Block Comment: \begin{comment} ... \end{comment}
+\usepackage{wasysym} % Load the package 'wasysym' after the 'ams' packages 
 \usepackage{framed} % frame a lot of stuff, URL:
 \usepackage{tkz-graph} % For drawing graphs
 	\usetikzlibrary{arrows}
 	\usetikzlibrary{calc}
+
+
 
 %% ~~~ Page Geometry ~~~
 % ~~ Margins ~~
@@ -36,6 +44,21 @@
 \usepackage{wrapfig}
 
 %% ___ SETUP END _____________________________________________________________
+
+
+% === COMMANDS ===============================================================
+\newcommand{\circchar}[1]{{\Large \textcircled{\normalsize #1}}} % Circle a characher for diagrams/graphs
+\newcommand{\circmath}[1]{{\LARGE \textcircled{\normalsize #1}}} % Circle large enough for a negated character
+\newcommand{\dspst}{\displaystyle} % Shortcut for \displaystyle
+\newcommand{\BU}[1]{\underline{\textbf{#1}}} % \BU - bold and underline
+\newcommand{\lfb}{\left[}  
+\newcommand{\rtb}{\right]}
+\newcommand{\lfp}{\left(}  
+\newcommand{\rtp}{\right)}
+\newcommand{\rarw}{$\rightarrow$\ }
+\newcommand{\larw}{$\leftarrow$\ }
+\newcommand{\mbf}[1]{\mathbf{#1}}
+% ___ END CMD ________________________________________________________________
 
 \begin{document}
 %% === DOCUMENT BEGIN ========================================================
